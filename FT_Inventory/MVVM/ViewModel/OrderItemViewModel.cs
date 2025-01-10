@@ -37,6 +37,7 @@ namespace FT_Inventory.MVVM.ViewModel
                     {
                         _selectedProduct = product;
                         OnPropertyChanged(nameof(SelectedProduct));
+                        this.LoadProduct();
                     }
             }
         }

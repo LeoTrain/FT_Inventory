@@ -25,7 +25,9 @@ namespace FT_Inventory.MVVM.ViewModel
                     if (customer.FullName == value)
                     {
                         _selectedCustomer = customer;
+                        CurrentOrder.Customer = _selectedCustomer;
                         OnPropertyChanged(nameof(SelectedCustomer));
+                        OnPropertyChanged(nameof(CurrentOrder));
                     }
                 }
             }

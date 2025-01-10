@@ -37,5 +37,10 @@ namespace FT_Inventory.MVVM.Models
             Quantity = quantity;
             TotalPrice = product.Price * quantity;
         }
+
+        public void CalculateTotalPrice()
+        {
+            TotalPrice = Product.Price * Quantity;
+        }
     }
 }

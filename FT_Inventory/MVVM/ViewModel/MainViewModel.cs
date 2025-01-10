@@ -71,7 +71,7 @@ namespace FT_Inventory.MVVM.ViewModel
             GoBackCommand = new RelayCommand(o => GoBack());
             AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(_dbManager, new Product(), true)));
             AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(_dbManager, new Customer(), true)));
-            AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, new Order(), true)));
+            AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, new Order(this._dbManager.GetLastOrderId()+1), true)));
             AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(o), true)));
             SaveProductCommand = new RelayCommand(o =>
             {
@@ -97,10 +97,10 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is Order order)
                 {
-                    if (order.OrderId == 0)
-                        SaveNewOrder(order);
-                    else
+                    if (this._dbManager.OrderExists(order.OrderId))
                         SaveExistingOrder(order);
+                    else
+                        SaveNewOrder(order);
                 }
             });
             SaveOrderItemCommand = new RelayCommand(o =>
@@ -212,8 +212,13 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 OrderDetailsViewModel currentView = CurrentView as OrderDetailsViewModel;
                 currentView.LoadCustomer();
+                currentView.CurrentOrder.CalculateTotalPrice();
                 this._dbManager.InsertOrder(order);
                 MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                foreach (OrderItem orderItem in order.OrderItems)
+                {
+                    this._dbManager.InsertOrderItem(orderItem);
+                }
                 GoBack();
             }
             catch (SqlException exception)
@@ -236,8 +241,11 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void SaveNewOrderItem(OrderItem orderItem)
         {
-            this._dbManager.InsertOrderItem(orderItem);
             MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            OrderDetailsViewModel ovm = this._viewHistory.Peek() as OrderDetailsViewModel;
+            ovm.CurrentOrder.OrderItems.Add(orderItem);
+            ovm.CurrentOrder.CalculateTotalPrice();
+            OnPropertyChanged(nameof(ovm.CurrentOrder));
             GoBack();
         }
 
@@ -245,8 +253,25 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             if (_dbManager.UpdateOrderItem(orderItem))
             {
+                OrderDetailsViewModel ovvm = this._viewHistory.Peek() as OrderDetailsViewModel;
+                ovvm.CurrentOrder.UpdateOrderItem(orderItem);
+                ovvm.CurrentOrder.CalculateTotalPrice();
+                OnPropertyChanged(nameof(ovvm.CurrentOrder));
                 MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
+                OrdersViewModel ovm = this._viewHistory.Peek() as OrdersViewModel;
+                ovm.SelectedOrder = ovvm.CurrentOrder;
+                //for (int i = 0; i < ovm.SelectedOrder.OrderItems.Count; i++)
+                //{
+                    //if (ovm.SelectedOrder.OrderItems[i].OrderItemId == orderItem.OrderItemId)
+                    //{
+                    //    ovm.SelectedOrder.OrderItems[i] = orderItem;
+                    //    ovm.SelectedOrder.OrderItems[i].CalculateTotalPrice();
+                    //    ovm.SelectedOrder.CalculateTotalPrice();
+                    //    OnPropertyChanged(nameof(ovm.SelectedOrder));
+                    //    return;
+                    //}
+                //}
             }
             else
                 MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -124,7 +124,7 @@ namespace FT_Inventory.MVVM.Models
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@OrderId", orderItem.OrderId),
-                new SqlParameter("@ProductId", orderItem.ProductId),
+                new SqlParameter("@ProductId", orderItem.Product.Id),
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
@@ -175,6 +175,17 @@ namespace FT_Inventory.MVVM.Models
 
         public bool UpdateOrder(Order order)
         {
+            foreach (OrderItem item in order.OrderItems)
+            {
+                if (this.OrderItemExists(item))
+                {
+                    this.UpdateOrderItem(item);
+                }
+                else
+                {
+                    this.InsertOrderItem(item);
+                }
+            }
             string query = "UPDATE orders SET customer_id = @CustomerId, created_at = @CreatedAt WHERE order_id = @OrderId";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -393,7 +404,33 @@ namespace FT_Inventory.MVVM.Models
             return orderItems;
         }
 
+        public int GetLastOrderId()
+        {
+            string query = "SELECT MAX(order_id) FROM orders";
+            return (int)ExecuteScalar(query);
+        }
 
+        public bool OrderExists(int orderId)
+        {
+            string query = "SELECT COUNT(*) FROM orders WHERE order_id = @OrderID";
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@OrderId", orderId)
+            };
+            int count = (int)ExecuteScalar(query, parameters);
+            return count > 0;
+        }
+
+        public bool OrderItemExists(OrderItem item)
+        {
+            string query = "SELECT COUNT(*) FROM order_item WHERE order_item_id = @OrderItemId";
+            List<SqlParameter> parameters = new List<SqlParameter>
+            {
+                new SqlParameter("@OrderItemId", item.OrderItemId)
+            };
+            int count = (int)ExecuteScalar(query, parameters);
+            return count > 0;
+        }
 
     }
 }

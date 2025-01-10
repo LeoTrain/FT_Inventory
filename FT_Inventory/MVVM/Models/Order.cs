@@ -22,9 +22,9 @@ namespace FT_Inventory.MVVM.Models
             TotalPrice = 0;
         }
 
-        public Order()
+        public Order(int orderId)
         {
-            OrderId = 0;
+            OrderId = orderId;
             Customer = new Customer();
             CreatedAt = DateTime.Now;
             OrderItems = new List<OrderItem>();
@@ -36,17 +36,17 @@ namespace FT_Inventory.MVVM.Models
             Customer = customer;
             CreatedAt = createdAt;
             OrderItems = orderItems;
-            TotalPrice = CalculateTotalPrice();
+            CalculateTotalPrice();
         }
 
-        public decimal CalculateTotalPrice()
+        public void CalculateTotalPrice()
         {
-            decimal totalPrice = 0;
+            TotalPrice = 0;
             foreach (OrderItem item in OrderItems)
             {
-                totalPrice += item.TotalPrice;
+                item.CalculateTotalPrice();
+                TotalPrice += item.TotalPrice;
             }
-            return totalPrice;
         }
 
         public void AddOrderItem(OrderItem item)
@@ -57,6 +57,17 @@ namespace FT_Inventory.MVVM.Models
         public void RemoveOrderItem(OrderItem item)
         {
             OrderItems.Remove(item);
+        }
+
+        public void UpdateOrderItem(OrderItem item)
+        {
+            OrderItem orderItem = OrderItems.Find(i => i.OrderItemId == item.OrderItemId);
+            if (orderItem != null)
+            {
+                orderItem.Product = item.Product;
+                orderItem.Quantity = item.Quantity;
+                orderItem.CalculateTotalPrice();
+            }
         }
     }
 
