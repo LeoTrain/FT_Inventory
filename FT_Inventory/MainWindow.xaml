@@ -1,0 +1,96 @@
+﻿<Window x:Class="FT_Inventory.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FT_Inventory"
+        xmlns:viewModel="clr-namespace:FT_Inventory.MVVM.ViewModel"
+        mc:Ignorable="d"
+        Height="600" Width="920"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen">
+
+    <Border Background="{StaticResource BlackBrush}"
+            CornerRadius="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="FT_Invetory"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Left"
+                      Foreground="{StaticResource WhiteBrush}"
+                      FontSize="22"
+                      Margin="20, 0, 0, 0"
+                      FontFamily="/Fonts/Poppins/#Poppins"/>
+
+            <Grid Grid.Row="1" Margin="0, 0, 0, 10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <RadioButton Content="Home"
+                             Height="50"
+                             Foreground="{StaticResource WhiteBrush}"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             IsChecked="True"
+                             Command="{Binding SwitchToHomeView}"/>
+                    <RadioButton Content="Products"
+                             Height="50"
+                             Foreground="{StaticResource WhiteBrush}"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding SwitchToProductsView}"/>
+                    <RadioButton Content="Customers"
+                             Height="50"
+                             Foreground="{StaticResource WhiteBrush}"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding SwitchToCustomerView}"/>
+                    <RadioButton Content="Orders"
+                             Height="50"
+                             Foreground="{StaticResource WhiteBrush}"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding SwitchToOrderView}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                    <Button Content="Exit"
+                            Height="50"
+                            Width="150"
+                            Foreground="{StaticResource WhiteBrush}"
+                            FontSize="24"
+                            Style="{StaticResource DeleteButtonTheme}"
+                            x:Name="ExitButton" Click="ExitButton_Click"/>
+                </StackPanel>
+            </Grid>
+
+
+            <TextBox Width="200"
+                     Height="40"
+                     VerticalContentAlignment="Center"
+                     HorizontalAlignment="Left"
+                     Margin="5"
+                     Grid.Column="1"
+                     Style="{StaticResource ModernTextBox}"/>
+
+            <ContentControl Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10"
+                            Content="{Binding CurrentView}"/>
+
+        </Grid>
+        
+    </Border>
+</Window>

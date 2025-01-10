@@ -1,0 +1,128 @@
+﻿<UserControl x:Class="FT_Inventory.MVVM.View.OrderDetailsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="700">
+        <Grid Background="{StaticResource BlackBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <!-- Left panel -->
+                <ColumnDefinition Width="3*" />
+                <!-- Right panel -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel: Order and Customer Details -->
+            <StackPanel Grid.Column="0"  Margin="10">
+                <TextBlock Text="Order Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"
+                           Foreground="White"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Order ID:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.OrderId}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Customer ID:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.Id}" Background="White" Width="155"/>
+                </StackPanel>
+
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Created At:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.CreatedAt, 
+                         StringFormat='{}{0:yyyy-MM-dd}'}"
+                         Background="White"
+                         Width="155"/>
+                </StackPanel>
+
+                <TextBlock Text="Customer Details" FontSize="16" FontWeight="Bold" Margin="10,20,0,10"
+                           Foreground="White"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBox Text="{Binding CurrentOrder.Customer.LastName}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Email:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.Email}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Phone:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.Phone}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Address:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.Address}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="City:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.City}" Background="White" Width="155"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Country:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentOrder.Customer.Country}" Background="White" Width="155"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Right Panel: Order Items -->
+            <StackPanel Grid.Column="1" Margin="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Order Items" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"
+                           Foreground="White"/>
+
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding CurrentOrder.OrderItems}" Margin="0,0,0,10">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,5" Background="LightGray">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding Product.Name}" Grid.Column="0"/>
+                                <TextBlock Text="{Binding OrderItemId}" Grid.Column="1"/>
+                                <TextBlock Text="{Binding Quantity}" Grid.Column="2"/>
+                                <TextBlock Text="{Binding TotalPrice, StringFormat=\{0:C\}}" Grid.Column="3" HorizontalAlignment="Right"/>
+                                <Button Content="Edit" Command="{Binding DataContext.SwitchToOrderItemView, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding}" Grid.Column="4" Width="50"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Grid.Row="2" Content="Add Item" Command="{Binding DataContext.SwitchToOrderItemView, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding}" HorizontalAlignment="Right" Width="100"/>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,5" VerticalAlignment="Bottom">
+                    <TextBlock Text="Total Price:" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"
+                               Foreground="White"/>
+                    <TextBlock Text="{Binding CurrentOrder.TotalPrice, StringFormat=\{0:C\}}" HorizontalAlignment="Right" Margin="0,10,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="4">
+                    <Button Content="Cancel" Command="{Binding DataContext.GoBackCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Margin="10"/>
+                    <Button Content="Save" Command="{Binding DataContext.SaveOrderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding CurrentOrder}" Margin="10"/>
+                    
+                </StackPanel>
+
+            </Grid>
+
+
+        </StackPanel>
+        </Grid>
+</UserControl>

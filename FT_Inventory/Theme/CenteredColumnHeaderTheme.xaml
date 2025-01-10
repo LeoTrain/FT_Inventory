@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ 
+    <Style TargetType="{x:Type DataGridColumnHeader}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Background" Value="{StaticResource IntenseBlackBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource LightGrayBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource IntenseBlackBrush}"/>
+
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    </Style>
+   
+</ResourceDictionary>

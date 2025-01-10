@@ -1,0 +1,56 @@
+﻿<Application x:Class="FT_Inventory.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModel="clr-namespace:FT_Inventory.MVVM.ViewModel"
+             xmlns:view="clr-namespace:FT_Inventory.MVVM.View"
+             xmlns:local="clr-namespace:FT_Inventory"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Colours.xaml"/>
+                <ResourceDictionary Source="Theme/MenuButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/TextBoxTheme.xaml"/>
+                <ResourceDictionary Source="Theme/DeleteButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/EditButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ProductsDataGridTheme.xaml"/>
+                <ResourceDictionary Source="Theme/ComboBoxFilterTheme.xaml"/>
+                <ResourceDictionary Source="Theme/CenteredColumnHeaderTheme.xaml"/>
+                <ResourceDictionary Source="Theme/CenteredColumns.xaml"/>
+                <ResourceDictionary Source="Theme/LabelStyleWhite.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
+                <view:HomeView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:ProductsViewModel}">
+                <view:ProductsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:ProductDetailsViewModel}">
+                <view:ProductDetailsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:CustomersViewModel}">
+                <view:CustomersView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:CustomerDetailsViewModel}">
+                <view:CustomerDetailsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:OrdersViewModel}">
+                <view:OrdersView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:OrderDetailsViewModel}">
+                <view:OrderDetailsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:OrderItemViewModel}">
+                <view:OrderItemView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

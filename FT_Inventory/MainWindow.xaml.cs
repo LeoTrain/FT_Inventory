@@ -1,0 +1,40 @@
+﻿using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using FT_Inventory.MVVM.ViewModel;
+using FT_Inventory.MVVM.Models;
+
+namespace FT_Inventory
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private DatabaseManager dbManager;
+        public MainWindow()
+        {
+            InitializeComponent();
+            dbManager = new DatabaseManager("Server=desktop-u0s8q19\\SQLEXPRESS;Database=InventoryDb;User Id=tom;Password=1234;TrustServerCertificate=True;");
+            DataContext = new MainViewModel(dbManager);
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to proceed?",
+                          "Confirmation",
+                          MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+                System.Windows.Application.Current.Shutdown();
+        }
+
+    }
+}

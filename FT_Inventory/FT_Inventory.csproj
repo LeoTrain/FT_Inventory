@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\alex.jpg" />
+    <None Remove="Images\beer.png" />
+    <None Remove="Images\dumbbell.png" />
+    <None Remove="Images\hannah.webp" />
+    <None Remove="Images\kim.webp" />
+    <None Remove="Images\man.png" />
+    <None Remove="Images\statistics.png" />
+    <None Remove="Images\zack.webp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\alex.jpg" />
+    <Resource Include="Images\beer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\dumbbell.png" />
+    <Resource Include="Images\hannah.webp" />
+    <Resource Include="Images\kim.webp" />
+    <Resource Include="Images\man.png" />
+    <Resource Include="Images\statistics.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\zack.webp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+  </ItemGroup>
+
+</Project>

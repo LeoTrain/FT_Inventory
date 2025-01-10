@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="FT_Inventory.MVVM.View.ProductDetailsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
+             xmlns:base="clr-namespace:FT_Inventory"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="700"
+             d:DataContext="{d:DesignInstance Type=base:MainWindow}">
+
+    <StackPanel Background="{StaticResource BlackBrush}">
+        <!-- Horizontal Top -->
+        <StackPanel Orientation="Horizontal" Height="250">
+            <!-- Top Left -->
+            <StackPanel Orientation="Vertical" Width="350">
+                <StackPanel Orientation="Horizontal" Margin="5, 10, 0, 0">
+                    <TextBlock Text="Id:" Width="100" Margin="0, 0, 10, 0"/>
+                    <TextBlock Text="{Binding CurrentProduct.Id}" Width="240" Height="15" Background="White"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Stock Keeping Unit:" Width="100" Margin="0, 0, 10, 0"/>
+                    <TextBlock Text="{Binding CurrentProduct.StockKeepingUnit}" Width="240" Height="15" Background="White"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Name:" Width="100" Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.Name}" Width="240" Height="15"
+                             x:Name="ProductNameText"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Description:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.Description}" Width="240" Height="15"
+                             x:Name="ProductDescriptionText"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Price:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.Price}" Width="240" Height="15"
+                             x:Name="ProductPriceText"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Stock Quantity:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.StockQuantity}" Width="240" Height="15"
+                             x:Name="ProductStockQuantityText"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Category:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.Category}" Width="240" Height="15"
+                             x:Name="ProductCategoryText"/>
+                </StackPanel>
+
+            </StackPanel>
+            <!-- Image Top Right -->
+            <StackPanel Width="350">
+                <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="10" Margin="10, 10, 10, 10" Height="230">
+                    <Image x:Name="ProductImage" Source="{Binding CurrentProduct.ImageUrl}" Width="300" Height="230"/>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Horizontal Bottom -->
+        <StackPanel Orientation="Horizontal" Height="250">
+            <!-- Bottom Left -->
+            <StackPanel Orientation="Vertical" Width="350">
+                <StackPanel Orientation="Horizontal" Margin="5, 10, 0, 0">
+                    <TextBlock Text="Image Url:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.ImageUrl}" Width="240" Height="15"
+                             x:Name="ProductImageUrlText"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Is Active:" Width="100"  Margin="0, 0, 10, 0"/>
+                    <TextBox Text="{Binding CurrentProduct.IsActive}" Width="240" Height="15"
+                             x:Name="ProductIsActiveText"/>
+                </StackPanel>
+            </StackPanel>
+            <!-- Bottom Right -->
+            <StackPanel Orientation="Vertical" Width="350">
+                <!-- Input Fields -->
+                <StackPanel Orientation="Vertical" Height="220">
+                    <StackPanel Orientation="Vertical" Width="350">
+                        <StackPanel Orientation="Horizontal" Margin="10, 10, 20, 0">
+                            <TextBlock Text="Discount" Width="100"  Margin="0, 0, 10, 0"/>
+                            <TextBox Text="{Binding CurrentProduct.Discount}" Width="240" Height="15"
+                             x:Name="ProductDiscountText"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
+                            <TextBlock Text="Created At:" Width="100"  Margin="0, 0, 10, 0"/>
+                            <TextBlock Text="{Binding CurrentProduct.CreatedAt}" Width="240" Height="15" Background="White"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
+                            <TextBlock Text="Updated At:" Width="100"  Margin="0, 0, 10, 0"/>
+                            <TextBlock Text="{Binding CurrentProduct.UpdatedAt}" Width="240" Height="15" Background="White"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- Buttons -->
+                <StackPanel Orientation="Horizontal" Height="30">
+                    <Grid Width="360">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Cancel"
+                                Grid.Column="1" 
+                                Width="50"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="0, 0, 15, 0"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                AncestorType={x:Type Window}}, Path=DataContext.GoBackCommand}"
+                                CommandParameter="{Binding}"/>
+                        <Button Content="Save"
+                                x:Name="SaveButton"
+                                Grid.Column="2" 
+                                Width="50"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="0, 0, 15, 0"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                AncestorType={x:Type Window}}, Path=DataContext.SaveProductCommand}"
+                                CommandParameter="{Binding CurrentProduct}"/>
+
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
