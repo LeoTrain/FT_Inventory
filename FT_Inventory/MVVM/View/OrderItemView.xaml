@@ -25,7 +25,7 @@
             
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Product ID:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
-                <TextBlock Text="{Binding CurrentOrderItem.ProductId}" Style="{StaticResource InputFieldUnfocusable}"/>
+                <ComboBox  ItemsSource="{Binding AllProductsName}" SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" Width="240"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -62,7 +62,7 @@
                         Command="{Binding DataContext.GoBackCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
                 <Button Content="Save" Width="100" Height="30" Margin="10"
                         Command="{Binding DataContext.SaveOrderItemCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                        CommandParameter="{Binding CurrentOrderItem}"/>
+                        CommandParameter="{Binding DataContext.CurrentOrderItem, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
             </StackPanel>
         </Grid>
     </Grid>

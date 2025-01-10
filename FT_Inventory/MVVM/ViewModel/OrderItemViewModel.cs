@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using FT_Inventory.Core.Commands;
@@ -13,6 +14,7 @@ namespace FT_Inventory.MVVM.ViewModel
         private DatabaseManager dbManager;
 
         private OrderItem _currentOrderItem;
+        private Product _selectedProduct;
         public RelayCommand IncrementQuantityCommand { get; set; }
         public RelayCommand DecrementQuantityCommand { get; set; }
         public OrderItem CurrentOrderItem
@@ -24,14 +26,34 @@ namespace FT_Inventory.MVVM.ViewModel
                 OnPropertyChanged(nameof(CurrentOrderItem));
             }
         }
+
+        public string SelectedProduct
+        {
+            get { return _selectedProduct.Name; }
+            set
+            {
+                foreach (Product product in AllProducts)
+                    if (product.Name == value)
+                    {
+                        _selectedProduct = product;
+                        OnPropertyChanged(nameof(SelectedProduct));
+                    }
+            }
+        }
+
+        public List<Product> AllProducts { get; }
+        public List<string> AllProductsName { get; }
         public bool IsNewOrderItem { get; }
         public OrderItemViewModel(DatabaseManager _dbManager, OrderItem currentOrderItem, bool isNewOrderItem)
         {
             dbManager = _dbManager;
-            _currentOrderItem = currentOrderItem;
+            CurrentOrderItem = currentOrderItem;
             IsNewOrderItem = isNewOrderItem;
             IncrementQuantityCommand = new RelayCommand(this.IncrementQuantity);
             DecrementQuantityCommand = new RelayCommand(this.DecrementQuantity);
+            AllProducts = this.dbManager.GetAllProducts();
+            AllProductsName = AllProducts.Select(p => p.Name).ToList();
+            _selectedProduct = AllProducts[0];
         }
 
         private void IncrementQuantity(object obj)
@@ -49,6 +71,12 @@ namespace FT_Inventory.MVVM.ViewModel
                 CurrentOrderItem.TotalPrice = CurrentOrderItem.Product.Price * CurrentOrderItem.Quantity;
                 OnPropertyChanged(nameof(CurrentOrderItem));
             }
+        }
+
+        public void LoadProduct()
+        {
+            CurrentOrderItem.Product = _selectedProduct;
+            OnPropertyChanged(nameof(CurrentOrderItem));
         }
 
     }

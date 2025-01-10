@@ -26,7 +26,7 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Customer ID:" Style="{StaticResource LabelStyleWhite}"/>
-                <TextBlock Text="{Binding CurrentOrder.Customer.Id}" Style="{StaticResource InputFieldUnfocusable}"/>
+                <ComboBox  ItemsSource="{Binding AllCustomersName}" SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}" Width="240"/>
             </StackPanel>
 
 
@@ -106,7 +106,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Button Grid.Row="2" Content="Add Item" Command="{Binding DataContext.SwitchToOrderItemView, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding}" HorizontalAlignment="Right" Width="100"/>
+                <Button Grid.Row="2" Content="Add Item" Command="{Binding DataContext.AddNewOrderItem, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding CurrentOrder.OrderId}" HorizontalAlignment="Right" Width="100"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,5" VerticalAlignment="Bottom">
                     <TextBlock Text="Total Price:" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"
                                Foreground="White"/>

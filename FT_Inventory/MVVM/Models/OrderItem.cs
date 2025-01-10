@@ -16,15 +16,17 @@ namespace FT_Inventory.MVVM.Models
         public Product Product { get; set; }
 
 
-        public OrderItem()
+        public OrderItem(object orderId)
         {
             OrderItemId = 0;
             Product = new Product();
             ProductId = Product.Id;
-            OrderId = 0;
+            if (orderId is int)
+                OrderId = (int)orderId;
+            else
+                throw new ArgumentException("Order Id must be an integer");
             Quantity = 0;
             TotalPrice = 0;
-
         }
         public OrderItem(int orderItemId, Product product, int quantity, int orderId)
         {

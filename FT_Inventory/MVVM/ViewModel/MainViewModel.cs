@@ -72,7 +72,7 @@ namespace FT_Inventory.MVVM.ViewModel
             AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(_dbManager, new Product(), true)));
             AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(_dbManager, new Customer(), true)));
             AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, new Order(), true)));
-            AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(), true)));
+            AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(o), true)));
             SaveProductCommand = new RelayCommand(o =>
             {
                 if (o is Product product)
@@ -107,6 +107,8 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is OrderItem orderItem)
                 {
+                    OrderItemViewModel currentView = CurrentView as OrderItemViewModel;
+                    currentView.LoadProduct();
                     if (orderItem.OrderItemId == 0)
                         SaveNewOrderItem(orderItem);
                     else
@@ -208,6 +210,8 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             try
             {
+                OrderDetailsViewModel currentView = CurrentView as OrderDetailsViewModel;
+                currentView.LoadCustomer();
                 this._dbManager.InsertOrder(order);
                 MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 GoBack();
