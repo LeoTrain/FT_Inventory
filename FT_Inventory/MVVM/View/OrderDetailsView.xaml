@@ -6,74 +6,72 @@
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="700">
-        <Grid Background="{StaticResource BlackBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <!-- Left panel -->
-                <ColumnDefinition Width="3*" />
-                <!-- Right panel -->
-            </Grid.ColumnDefinitions>
+    <Grid Background="{StaticResource BlackBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <!-- Left panel -->
+            <ColumnDefinition Width="*" />
+            <!-- Right panel -->
+        </Grid.ColumnDefinitions>
 
-            <!-- Left Panel: Order and Customer Details -->
-            <StackPanel Grid.Column="0"  Margin="10">
-                <TextBlock Text="Order Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"
+        <!-- Left Panel: Order and Customer Details -->
+        <StackPanel Grid.Column="0"  Margin="10">
+            <TextBlock Text="Order Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"
                            Foreground="White"/>
 
-                <StackPanel Orientation="Horizontal" Margin="0,5">
+            <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Order ID:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.OrderId}" Background="White" Width="155"/>
-                </StackPanel>
+                <TextBlock Text="{Binding CurrentOrder.OrderId}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,5">
+            <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Customer ID:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.Id}" Background="White" Width="155"/>
-                </StackPanel>
+                <TextBlock Text="{Binding CurrentOrder.Customer.Id}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
 
 
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Created At:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.CreatedAt, 
+                <TextBlock Text="{Binding CurrentOrder.CreatedAt, 
                          StringFormat='{}{0:yyyy-MM-dd}'}"
-                         Background="White"
-                         Width="155"/>
-                </StackPanel>
-
-                <TextBlock Text="Customer Details" FontSize="16" FontWeight="Bold" Margin="10,20,0,10"
-                           Foreground="White"/>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}"/>
-                <TextBox Text="{Binding CurrentOrder.Customer.LastName}" Background="White" Width="155"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Email:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.Email}" Background="White" Width="155"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Phone:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.Phone}" Background="White" Width="155"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Address:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.Address}" Background="White" Width="155"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="City:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.City}" Background="White" Width="155"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Country:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentOrder.Customer.Country}" Background="White" Width="155"/>
-                </StackPanel>
+                         Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
 
-            <!-- Right Panel: Order Items -->
-            <StackPanel Grid.Column="1" Margin="10">
+            <TextBlock Text="Customer Details" FontSize="16" FontWeight="Bold" Margin="10,20,0,10"
+                           Foreground="White"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.FullName}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Email:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.Email}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Phone:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.Phone}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Address:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.Address}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="City:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.City}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Country:" Style="{StaticResource LabelStyleWhite}"/>
+                <TextBlock Text="{Binding CurrentOrder.Customer.Country}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Right Panel: Order Items -->
+        <StackPanel Grid.Column="1" Margin="10">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
@@ -117,12 +115,10 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="4">
                     <Button Content="Cancel" Command="{Binding DataContext.GoBackCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Margin="10"/>
                     <Button Content="Save" Command="{Binding DataContext.SaveOrderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding CurrentOrder}" Margin="10"/>
-                    
+
                 </StackPanel>
 
             </Grid>
-
-
         </StackPanel>
-        </Grid>
+    </Grid>
 </UserControl>

@@ -48,7 +48,8 @@ namespace FT_Inventory.MVVM.ViewModel
         public RelayCommand SwitchToOrderItemView { get; }
         public RelayCommand AddNewOrderCommand { get; }
         public RelayCommand SaveOrderCommand { get; }
-        public RelayCommand AddNewORderItem { get; }
+        public RelayCommand AddNewOrderItem { get; }
+        public RelayCommand SaveOrderItemCommand { get; }
 
         public MainViewModel(DatabaseManager dbManager)
         {
@@ -71,7 +72,7 @@ namespace FT_Inventory.MVVM.ViewModel
             AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(_dbManager, new Product(), true)));
             AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(_dbManager, new Customer(), true)));
             AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, new Order(), true)));
-            AddNewORderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(), true)));
+            AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(), true)));
             SaveProductCommand = new RelayCommand(o =>
             {
                 if (o is Product product)
@@ -102,6 +103,16 @@ namespace FT_Inventory.MVVM.ViewModel
                         SaveExistingOrder(order);
                 }
             });
+            SaveOrderItemCommand = new RelayCommand(o =>
+            {
+                if (o is OrderItem orderItem)
+                {
+                    if (orderItem.OrderItemId == 0)
+                        SaveNewOrderItem(orderItem);
+                    else
+                        SaveExistingOrderItem(orderItem);
+                }
+            });
         }
 
         public void NavigateTo(object newView)
@@ -121,6 +132,12 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void SaveExistingProduct(Product product)
         {
+            if (string.IsNullOrEmpty(product.Name))
+            {
+                MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (_dbManager.UpdateProduct(product))
             {
                 MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -143,6 +160,11 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void SaveNewProduct(Product product)
         {
+            if (string.IsNullOrEmpty(product.Name))
+            {
+                MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             this._dbManager.InsertProduct(product);
             MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             GoBack();
@@ -150,25 +172,51 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void SaveNewCustomer(Customer customer)
         {
+            if (string.IsNullOrEmpty(customer.FirstName))
+            {
+                MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (string.IsNullOrEmpty(customer.LastName))
+            {
+                MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (string.IsNullOrEmpty(customer.Email))
+            {
+                MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             try
             {
                 this._dbManager.InsertCustomer(customer);
                 MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                CustomersViewModel cvm = this._viewHistory.Peek() as CustomersViewModel;
+                cvm.AddCustomer(customer);
                 GoBack();
+
             }
             catch (SqlException exception)
             {
                 if (exception.Number == 2627)
-                MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
 
         public void SaveNewOrder(Order order)
         {
-            this._dbManager.InsertOrder(order);
-            MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            GoBack();
+            try
+            {
+                this._dbManager.InsertOrder(order);
+                MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                GoBack();
+            }
+            catch (SqlException exception)
+            {
+                if (exception.Number == 547)
+                    MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void SaveExistingOrder(Order order)
@@ -182,5 +230,23 @@ namespace FT_Inventory.MVVM.ViewModel
                 MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        public void SaveNewOrderItem(OrderItem orderItem)
+        {
+            this._dbManager.InsertOrderItem(orderItem);
+            MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            GoBack();
+        }
+
+        public void SaveExistingOrderItem(OrderItem orderItem)
+        {
+            if (_dbManager.UpdateOrderItem(orderItem))
+            {
+                MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                this.GoBack();
+            }
+            else
+                MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+        }
     }
 }

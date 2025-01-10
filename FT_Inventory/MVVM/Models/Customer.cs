@@ -132,6 +132,7 @@ namespace FT_Inventory.MVVM.Models
                 _updatedAt = value;
             }
         }
+        public string FullName { get; set; }
         public string ImageUrl
         {
             get => _imageUrl;
@@ -149,18 +150,19 @@ namespace FT_Inventory.MVVM.Models
         public Customer()
         {
             _id = 0;
-            _firstName = "NewFirstName";
-            _lastName = "NewLastName";
-            _email = "NewEmail";
-            _phone = "NewPhone";
-            _address = "NewAddress";
-            _city = "NewCity";
-            _state = "NewState";
-            _postalCode = "NewPostalCode";
-            _country = "NewCountry";
+            _firstName = string.Empty;
+            _lastName = string.Empty;
+            _email = string.Empty;
+            _phone = string.Empty;
+            _address = string.Empty;
+            _city = string.Empty;
+            _state = string.Empty;
+            _postalCode = string.Empty;
+            _country = string.Empty;
             _createdAt = DateTime.Now;
             _updatedAt = DateTime.Now;
-            _imageUrl = "new/image/url";
+            _imageUrl = string.Empty;
+            FullName = string.Empty;
         }
         public Customer(int customerId, string first_name, string last_name, string email, string phone, DateTime createdAt, DateTime updatedAt, string address = "", string city = "", string state = "", string postal_code = "", string country = "", string image_url = "")
         {
@@ -177,6 +179,7 @@ namespace FT_Inventory.MVVM.Models
             _createdAt = createdAt;
             _updatedAt = updatedAt;
             _imageUrl = image_url;
+            FullName = _firstName + " " + _lastName;
         }
     }
 }

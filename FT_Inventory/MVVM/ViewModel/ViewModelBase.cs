@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace FT_Inventory.MVVM.ViewModel
 {
@@ -25,6 +26,11 @@ namespace FT_Inventory.MVVM.ViewModel
             field = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        public void ClearTextBox(TextBox textBox)
+        {
+            textBox.Text= textBox.Text.Replace("\r\n", "");
         }
     }
 }

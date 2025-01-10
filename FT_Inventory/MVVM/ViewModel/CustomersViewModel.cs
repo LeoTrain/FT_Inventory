@@ -51,5 +51,10 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             _customers = customers;
         }
+
+        public void AddCustomer(Customer customer)
+        {
+            _customers.Add(customer);
+        }
     }
 }

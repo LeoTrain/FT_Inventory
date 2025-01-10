@@ -15,44 +15,32 @@
             <!-- Top Left -->
             <StackPanel Orientation="Vertical" Width="350">
                 <StackPanel Orientation="Horizontal" Margin="5, 10, 0, 0">
-                    <TextBlock Text="Id:" Width="100" Margin="0, 0, 10, 0"/>
-                    <TextBlock Text="{Binding CurrentProduct.Id}" Width="240" Height="15" Background="White"/>
+                    <TextBlock Text="Id:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.Id}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Stock Keeping Unit:" Width="100" Margin="0, 0, 10, 0"/>
-                    <TextBlock Text="{Binding CurrentProduct.StockKeepingUnit}" Width="240" Height="15" Background="White"/>
+                    <TextBlock Text="S.K.U.:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.StockKeepingUnit}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Name:" Width="100" Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.Name}" Width="240" Height="15"
-                             x:Name="ProductNameText"/>
+                    <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.Name}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Description:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.Description}" Width="240" Height="15"
-                             x:Name="ProductDescriptionText"/>
+                    <TextBlock Text="Description:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.Description}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Price:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.Price}" Width="240" Height="15"
-                             x:Name="ProductPriceText"/>
+                    <TextBlock Text="Price:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.Price}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Stock Quantity:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.StockQuantity}" Width="240" Height="15"
-                             x:Name="ProductStockQuantityText"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Category:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.Category}" Width="240" Height="15"
-                             x:Name="ProductCategoryText"/>
-                </StackPanel>
+
 
             </StackPanel>
             <!-- Image Top Right -->
             <StackPanel Width="350">
-                <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="10" Margin="10, 10, 10, 10" Height="230">
-                    <Image x:Name="ProductImage" Source="{Binding CurrentProduct.ImageUrl}" Width="300" Height="230"/>
+                <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="10" Margin="15, 10, 10, 10" Height="230">
+                    <Image x:Name="ProductImage" Source="{Binding CurrentProduct.ImageUrl}" Width="300" Height="210"/>
                 </Border>
             </StackPanel>
         </StackPanel>
@@ -61,62 +49,60 @@
         <StackPanel Orientation="Horizontal" Height="250">
             <!-- Bottom Left -->
             <StackPanel Orientation="Vertical" Width="350">
-                <StackPanel Orientation="Horizontal" Margin="5, 10, 0, 0">
-                    <TextBlock Text="Image Url:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.ImageUrl}" Width="240" Height="15"
-                             x:Name="ProductImageUrlText"/>
+                <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
+                    <TextBlock Text="Stock Qty:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.StockQuantity}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Is Active:" Width="100"  Margin="0, 0, 10, 0"/>
-                    <TextBox Text="{Binding CurrentProduct.IsActive}" Width="240" Height="15"
-                             x:Name="ProductIsActiveText"/>
+                    <TextBlock Text="Category:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.Category}" Style="{StaticResource InputFieldsFocusable}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Image Url:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.ImageUrl}" Style="{StaticResource InputFieldsFocusable}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
+                    <TextBlock Text="Is Active:" Style="{StaticResource LabelStyleWhite}"/>
+                    <TextBox Text="{Binding CurrentProduct.IsActive}" Style="{StaticResource InputFieldsFocusable}"/>
                 </StackPanel>
             </StackPanel>
             <!-- Bottom Right -->
             <StackPanel Orientation="Vertical" Width="350">
                 <!-- Input Fields -->
-                <StackPanel Orientation="Vertical" Height="220">
+                <StackPanel Orientation="Vertical" Height="200">
                     <StackPanel Orientation="Vertical" Width="350">
                         <StackPanel Orientation="Horizontal" Margin="10, 10, 20, 0">
-                            <TextBlock Text="Discount" Width="100"  Margin="0, 0, 10, 0"/>
-                            <TextBox Text="{Binding CurrentProduct.Discount}" Width="240" Height="15"
-                             x:Name="ProductDiscountText"/>
+                            <TextBlock Text="Discount" Style="{StaticResource LabelStyleWhite}"/>
+                            <TextBox Text="{Binding CurrentProduct.Discount}" Style="{StaticResource InputFieldsFocusable}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
-                            <TextBlock Text="Created At:" Width="100"  Margin="0, 0, 10, 0"/>
-                            <TextBlock Text="{Binding CurrentProduct.CreatedAt}" Width="240" Height="15" Background="White"/>
+                            <TextBlock Text="Created At:" Style="{StaticResource LabelStyleWhite}"/>
+                            <TextBlock Text="{Binding CurrentProduct.CreatedAt}" Style="{StaticResource InputFieldUnfocusable}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
-                            <TextBlock Text="Updated At:" Width="100"  Margin="0, 0, 10, 0"/>
-                            <TextBlock Text="{Binding CurrentProduct.UpdatedAt}" Width="240" Height="15" Background="White"/>
+                            <TextBlock Text="Updated At:" Style="{StaticResource LabelStyleWhite}"/>
+                            <TextBlock Text="{Binding CurrentProduct.UpdatedAt}" Style="{StaticResource InputFieldUnfocusable}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
                 
                 <!-- Buttons -->
-                <StackPanel Orientation="Horizontal" Height="30">
+                <StackPanel Orientation="Horizontal" Height="50">
                     <Grid Width="360">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="120"/>
                         </Grid.ColumnDefinitions>
                         <Button Content="Cancel"
                                 Grid.Column="1" 
-                                Width="50"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="0, 0, 15, 0"
+                                Style="{StaticResource BaseDetailsViewButton}"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, 
                                 AncestorType={x:Type Window}}, Path=DataContext.GoBackCommand}"
                                 CommandParameter="{Binding}"/>
                         <Button Content="Save"
-                                x:Name="SaveButton"
                                 Grid.Column="2" 
-                                Width="50"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="0, 0, 15, 0"
+                                Style="{StaticResource BaseDetailsViewButton}"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, 
                                 AncestorType={x:Type Window}}, Path=DataContext.SaveProductCommand}"
                                 CommandParameter="{Binding CurrentProduct}"/>

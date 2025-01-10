@@ -9,6 +9,7 @@ namespace FT_Inventory.MVVM.Models
     public class OrderItem
     {
         public int OrderItemId { get; set; }
+        public int OrderId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal TotalPrice { get; set; }
@@ -20,13 +21,15 @@ namespace FT_Inventory.MVVM.Models
             OrderItemId = 0;
             Product = new Product();
             ProductId = Product.Id;
+            OrderId = 0;
             Quantity = 0;
             TotalPrice = 0;
 
         }
-        public OrderItem(int orderItemId, Product product, int quantity)
+        public OrderItem(int orderItemId, Product product, int quantity, int orderId)
         {
             OrderItemId = orderItemId;
+            OrderId = orderId;
             Product = product;
             ProductId = product.Id;
             Quantity = quantity;

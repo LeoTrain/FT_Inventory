@@ -8,62 +8,60 @@
              d:DesignHeight="500" d:DesignWidth="700">
     <Grid Background="{StaticResource BlackBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Order Item ID:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.OrderItemId}" Background="White" Width="240"/>
+        <StackPanel Grid.Column="0">
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Order Item ID:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.OrderItemId}" Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Product ID:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.ProductId}" Background="White" Width="240"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Order ID:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.OrderId}" Style="{StaticResource InputFieldUnfocusable}"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Product ID:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.ProductId}" Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Quantity:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.Quantity}" Background="White" Width="240"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Quantity:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.Quantity}" Style="{StaticResource InputFieldUnfocusable}" Width="180" Margin="0,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Width="50" Height="26">
+                    <Button Content="+" Height="26" Width="25" Command="{Binding IncrementQuantityCommand}" Margin="0,0,0,0" FontWeight="Bold" FontSize="16"/>
+                    <Button Content="-" Height="26" Width="25" Command="{Binding DecrementQuantityCommand}" FontSize="16"  FontWeight="Bold"/>
+                </StackPanel>
             </StackPanel>
 
-            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Total Price:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.TotalPrice, StringFormat=\{0:C\}}" Background="White" Width="240"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Total Price:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.TotalPrice, StringFormat=\{0:C\}}" Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
 
-            <TextBlock Text="Product Quick Tips:" FontSize="20" Grid.Row="4" Padding="10" />
+            <TextBlock Text="Product Quick Tips:" FontSize="23" Padding="10" Foreground="White" />
 
-            <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Product Name:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.Product.Name}" Background="White" Width="240"/>
+            <StackPanel  Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Product Name:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.Product.Name}" Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="Product Price:" Width="100"/>
-                <TextBlock Text="{Binding CurrentOrderItem.Product.Price, StringFormat=\{0:C\}}" Background="White" Width="240"/>
+            <StackPanel  Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Product Price:" Style="{StaticResource LabelStyleWhite}" Width="140"/>
+                <TextBlock Text="{Binding CurrentOrderItem.Product.Price, StringFormat=\{0:C\}}" Style="{StaticResource InputFieldUnfocusable}"/>
             </StackPanel>
-        </Grid>
+        </StackPanel>
+
 
         <Grid Grid.Column="1">
             <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <Button Content="Cancel" Width="100" Height="30" Margin="10"
                         Command="{Binding DataContext.GoBackCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
                 <Button Content="Save" Width="100" Height="30" Margin="10"
-                        Command="{Binding DataContext.SaveOrderitemCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        Command="{Binding DataContext.SaveOrderItemCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         CommandParameter="{Binding CurrentOrderItem}"/>
             </StackPanel>
         </Grid>

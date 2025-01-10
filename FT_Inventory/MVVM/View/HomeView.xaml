@@ -14,41 +14,6 @@
                       Margin="0, 0, 0, 20"/>
 
         <StackPanel Orientation="Horizontal">
-            <Border Width="400"
-                    Height="200">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
-                        <GradientStop Color="{StaticResource ColorGray}" Offset="0.0"/>
-                        <GradientStop Color="{StaticResource ColorBlack}" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Border.Clip>
-                    <RectangleGeometry RadiusX="10"
-                                       RadiusY="10"
-                                       Rect="0,0,400,200"/>
-                </Border.Clip>
-
-                <Grid>
-                    <StackPanel>
-                        <TextBlock Text="Latest statistics"
-                                   Foreground="White"
-                                   FontSize="28"
-                                   Margin="20, 10, 10, 0"
-                                   FontFamily="/Fonts/Poppins/#Poppins"/>
-                        <TextBlock Text="Get in Today !"
-                                   Foreground="White"
-                                   FontSize="18"
-                                   Margin="20, 10, 10, 0"
-                                   FontFamily="/Fonts/Poppins/#Poppins"/>
-                    </StackPanel>
-
-                    <Image Width="250"
-                           Height="250"
-                           Source="/Images/statistics.png"
-                           HorizontalAlignment="Right"/>
-                </Grid>
-            </Border>
 
             <Border Width="200"
                     Height="200"
@@ -74,6 +39,5 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-                   
     </StackPanel>
 </UserControl>
