@@ -22,8 +22,8 @@ namespace FT_Inventory
         public MainWindow()
         {
             InitializeComponent();
-            dbManager = new DatabaseManager("Server=desktop-u0s8q19\\SQLEXPRESS;Database=InventoryDb;User Id=tom;Password=1234;TrustServerCertificate=True;");
-            DataContext = new MainViewModel(dbManager);
+            this.dbManager = new DatabaseManager("Server=desktop-u0s8q19\\SQLEXPRESS;Database=InventoryDb;User Id=tom;Password=1234;TrustServerCertificate=True;");
+            DataContext = new MainViewModel(this.dbManager);
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
