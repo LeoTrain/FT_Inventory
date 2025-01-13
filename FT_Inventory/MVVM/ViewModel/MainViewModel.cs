@@ -32,19 +32,18 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
 
-        public ICommand SwitchToHomeView { get; }
-        public ICommand SwitchToProductsView { get; }
-        public ICommand SwitchToCustomerView { get; }
-        public ICommand SwitchToOrderView { get; }
-        public ICommand SwitchToOrderDetailsView { get; }
-        public ICommand SwitchToProductDetailsView { get; }
-        public ICommand SwitchToCustomerDetailsView { get; }
-        public ICommand GoBackCommand { get; }
-        public ICommand AddNewProductCommand { get; }
-        public ICommand SaveProductCommand { get; }
-        public ICommand AddNewCustomerCommand { get; }
-        public ICommand SaveCustomerCommand { get; }
-        public ICommand DeleteOrderCommand { get; }
+        public RelayCommand SwitchToHomeView { get; }
+        public RelayCommand SwitchToProductsView { get; }
+        public RelayCommand SwitchToCustomerView { get; }
+        public RelayCommand SwitchToOrderView { get; }
+        public RelayCommand SwitchToOrderDetailsView { get; }
+        public RelayCommand SwitchToProductDetailsView { get; }
+        public RelayCommand SwitchToCustomerDetailsView { get; }
+        public RelayCommand GoBackCommand { get; }
+        public RelayCommand AddNewProductCommand { get; }
+        public RelayCommand SaveProductCommand { get; }
+        public RelayCommand AddNewCustomerCommand { get; }
+        public RelayCommand SaveCustomerCommand { get; }
         public RelayCommand SwitchToOrderItemView { get; }
         public RelayCommand AddNewOrderCommand { get; }
         public RelayCommand SaveOrderCommand { get; }
@@ -54,33 +53,28 @@ namespace FT_Inventory.MVVM.ViewModel
         public MainViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
-            // Set HomeView as default view
-            CurrentView = new HomeViewModel();
-
-            // Initialize commands
-            SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(_dbManager, o as Product, false)));
-            SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(_dbManager, o as Customer, false)));
-            SwitchToOrderDetailsView = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, o as Order, false)));
-            SwitchToOrderItemView = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, o as OrderItem, false)));
-
+            _currentView = new HomeViewModel();
+            SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, o as Product, false)));
+            SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
+            SwitchToOrderDetailsView = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, o as Order, false)));
+            SwitchToOrderItemView = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(this._dbManager, o as OrderItem, false)));
             SwitchToHomeView = new RelayCommand(o => this.NavigateTo(new HomeViewModel()));
-            SwitchToProductsView = new RelayCommand(o => this.NavigateTo(new ProductsViewModel(_dbManager)));
-            SwitchToCustomerView = new RelayCommand(o => CurrentView = new CustomersViewModel(_dbManager));
-            SwitchToOrderView = new RelayCommand(o => CurrentView = new OrdersViewModel(_dbManager));
-
-            GoBackCommand = new RelayCommand(o => GoBack());
-            AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(_dbManager, new Product(), true)));
-            AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(_dbManager, new Customer(), true)));
-            AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(_dbManager, new Order(this._dbManager.GetLastOrderId()+1), true)));
-            AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(_dbManager, new OrderItem(o), true)));
+            SwitchToProductsView = new RelayCommand(o => this.NavigateTo(new ProductsViewModel(this._dbManager)));
+            SwitchToCustomerView = new RelayCommand(o => this.NavigateTo(new CustomersViewModel(this._dbManager)));
+            SwitchToOrderView = new RelayCommand(o => this.NavigateTo(new OrdersViewModel(this._dbManager)));
+            GoBackCommand = new RelayCommand(o => this.GoBack());
+            AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, new Product(), true)));
+            AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, new Customer(), true)));
+            AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, new Order(this._dbManager.GetLastOrderId()+1), true)));
+            AddNewOrderItem = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(this._dbManager, new OrderItem(o), true)));
             SaveProductCommand = new RelayCommand(o =>
             {
                 if (o is Product product)
                 {
                     if (product.Id == 0)
-                        SaveNewProduct(product);
+                        this.SaveNewProduct(product);
                     else
-                        SaveExistingProduct(product);
+                        this.SaveExistingProduct(product);
                 }
             });
             SaveCustomerCommand = new RelayCommand(o =>
@@ -88,9 +82,9 @@ namespace FT_Inventory.MVVM.ViewModel
                 if (o is Customer customer)
                 {
                     if (customer.Id == 0)
-                        SaveNewCustomer(customer);
+                        this.SaveNewCustomer(customer);
                     else
-                        SaveExistingCustomer(customer);
+                        this.SaveExistingCustomer(customer);
                 }
             });
             SaveOrderCommand = new RelayCommand(o =>
@@ -98,9 +92,9 @@ namespace FT_Inventory.MVVM.ViewModel
                 if (o is Order order)
                 {
                     if (this._dbManager.OrderExists(order.OrderId))
-                        SaveExistingOrder(order);
+                        this.SaveExistingOrder(order);
                     else
-                        SaveNewOrder(order);
+                        this.SaveNewOrder(order);
                 }
             });
             SaveOrderItemCommand = new RelayCommand(o =>
@@ -110,26 +104,26 @@ namespace FT_Inventory.MVVM.ViewModel
                     OrderItemViewModel currentView = CurrentView as OrderItemViewModel;
                     currentView.LoadProduct();
                     if (orderItem.OrderItemId == 0)
-                        SaveNewOrderItem(orderItem);
+                        this.SaveNewOrderItem(orderItem);
                     else
-                        SaveExistingOrderItem(orderItem);
+                        this.SaveExistingOrderItem(orderItem);
                 }
             });
         }
 
         public void NavigateTo(object newView)
         {
-            if (CurrentView != null)
-                _viewHistory.Push(CurrentView);
-            CurrentView = newView;
+            if (this.CurrentView != null)
+                this._viewHistory.Push(CurrentView);
+            this.CurrentView = newView;
         }
 
         public void GoBack()
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to go back?", "Cancel Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
-                if (_viewHistory.Count > 0)
-                    CurrentView = _viewHistory.Pop();
+                if (this._viewHistory.Count > 0)
+                    this.CurrentView = this._viewHistory.Pop();
         }
 
         public void SaveExistingProduct(Product product)
@@ -140,7 +134,7 @@ namespace FT_Inventory.MVVM.ViewModel
                 return;
             }
 
-            if (_dbManager.UpdateProduct(product))
+            if (this._dbManager.UpdateProduct(product))
             {
                 MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
@@ -195,7 +189,7 @@ namespace FT_Inventory.MVVM.ViewModel
                 MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 CustomersViewModel cvm = this._viewHistory.Peek() as CustomersViewModel;
                 cvm.AddCustomer(customer);
-                GoBack();
+                this.GoBack();
 
             }
             catch (SqlException exception)
@@ -205,21 +199,20 @@ namespace FT_Inventory.MVVM.ViewModel
             }
 
         }
-
         public void SaveNewOrder(Order order)
         {
             try
             {
-                OrderDetailsViewModel currentView = CurrentView as OrderDetailsViewModel;
-                currentView.LoadCustomer();
-                currentView.CurrentOrder.CalculateTotalPrice();
+                OrderDetailsViewModel odvm = CurrentView as OrderDetailsViewModel;
+                odvm.LoadCustomer();
+                odvm.CurrentOrder.CalculateTotalPrice();
                 this._dbManager.InsertOrder(order);
                 MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 foreach (OrderItem orderItem in order.OrderItems)
                 {
                     this._dbManager.InsertOrderItem(orderItem);
                 }
-                GoBack();
+                this.GoBack();
             }
             catch (SqlException exception)
             {
@@ -230,7 +223,7 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void SaveExistingOrder(Order order)
         {
-            if (_dbManager.UpdateOrder(order))
+            if (this._dbManager.UpdateOrder(order))
             {
                 MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
@@ -242,36 +235,25 @@ namespace FT_Inventory.MVVM.ViewModel
         public void SaveNewOrderItem(OrderItem orderItem)
         {
             MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            OrderDetailsViewModel ovm = this._viewHistory.Peek() as OrderDetailsViewModel;
-            ovm.CurrentOrder.OrderItems.Add(orderItem);
-            ovm.CurrentOrder.CalculateTotalPrice();
-            OnPropertyChanged(nameof(ovm.CurrentOrder));
-            GoBack();
+            OrderDetailsViewModel odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
+            odvm.CurrentOrder.OrderItems.Add(orderItem);
+            odvm.CurrentOrder.CalculateTotalPrice();
+            this.OnPropertyChanged(nameof(odvm.CurrentOrder));
+            this.GoBack();
         }
 
         public void SaveExistingOrderItem(OrderItem orderItem)
         {
             if (_dbManager.UpdateOrderItem(orderItem))
             {
-                OrderDetailsViewModel ovvm = this._viewHistory.Peek() as OrderDetailsViewModel;
-                ovvm.CurrentOrder.UpdateOrderItem(orderItem);
-                ovvm.CurrentOrder.CalculateTotalPrice();
-                OnPropertyChanged(nameof(ovvm.CurrentOrder));
+                OrderDetailsViewModel odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
+                odvm.CurrentOrder.UpdateOrderItem(orderItem);
+                odvm.CurrentOrder.CalculateTotalPrice();
+                OnPropertyChanged(nameof(odvm.CurrentOrder));
                 MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
                 OrdersViewModel ovm = this._viewHistory.Peek() as OrdersViewModel;
-                ovm.SelectedOrder = ovvm.CurrentOrder;
-                //for (int i = 0; i < ovm.SelectedOrder.OrderItems.Count; i++)
-                //{
-                    //if (ovm.SelectedOrder.OrderItems[i].OrderItemId == orderItem.OrderItemId)
-                    //{
-                    //    ovm.SelectedOrder.OrderItems[i] = orderItem;
-                    //    ovm.SelectedOrder.OrderItems[i].CalculateTotalPrice();
-                    //    ovm.SelectedOrder.CalculateTotalPrice();
-                    //    OnPropertyChanged(nameof(ovm.SelectedOrder));
-                    //    return;
-                    //}
-                //}
+                ovm.SelectedOrder = odvm.CurrentOrder;
             }
             else
                 MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
