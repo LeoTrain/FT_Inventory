@@ -166,6 +166,11 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+        /// <summary>
+        /// This method inserts a product into the database.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
         public bool InsertProduct(Product product)
         {
             if (this._isConnected == false)
@@ -189,6 +194,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method inserts a customer into the database.
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
         public bool InsertCustomer(Customer customer)
         {
             if (this._isConnected == false)
@@ -211,6 +221,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method inserts an order into the database.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool InsertOrder(Order order)
         {
             if (this._isConnected == false)
@@ -223,9 +238,14 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method inserts an order item into the database.
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <returns></returns>
         public bool InsertOrderItem(OrderItem orderItem)
         {
-            string query = "INSERT INTO order_item (order_id, product_id, quantity, total_price) VALUES (@OrderId, @ProductId, @Quantity, @TotalPrice)";
+            string query = "INSERT INTO order_items (order_id, product_id, quantity, total_price) VALUES (@OrderId, @ProductId, @Quantity, @TotalPrice)";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@OrderId", orderItem.OrderId),
@@ -238,6 +258,11 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+        /// <summary>
+        /// This method updates a product in the database.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
         public bool UpdateProduct(Product product)
         {
             string query = "UPDATE Products SET name = @Name, description = @Description, price = @Price, stock_quantity = @StockQuantity, " +
@@ -257,6 +282,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method updates a customer in the database.
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
         public bool UpdateCustomer(Customer customer)
         {
             string query = "UPDATE Customers SET first_name = @FirstName, last_name = @LastName, email = @Email, phone = @Phone, " +
@@ -278,6 +308,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method updates an order in the database.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool UpdateOrder(Order order)
         {
             foreach (OrderItem item in order.OrderItems)
@@ -301,9 +336,14 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method updates an order item in the database.
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <returns></returns>
         public bool UpdateOrderItem(OrderItem orderItem)
         {
-            string query = "UPDATE order_item SET order_id = @OrderId, product_id = @ProductId, quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
+            string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameter = new List<SqlParameter>
             {
                 new SqlParameter("@OrderItemId", orderItem.OrderItemId),
@@ -317,6 +357,11 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+        /// <summary>
+        /// This method deletes a product from the database.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
         public bool DeleteProduct(Product product)
         {
             string query = "DELETE FROM Products WHERE product_id = @ProductId";
@@ -327,6 +372,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method deletes a customer from the database.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         public bool DeleteCustomer(int customerId)
         {
             string query = "DELETE FROM Customers WHERE customer_id = @CustomerId";
@@ -337,6 +387,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method deletes an order from the database.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public bool DeleteOrder(Order order)
         {
             string query = "DELETE FROM orders WHERE order_id = @OrderId";
@@ -347,6 +402,11 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
+        /// <summary>
+        /// This method deletes an order item from the database.
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <returns></returns>
         public bool DeleteOrderItem(OrderItem orderItem)
         {
             string query = "DELETE FROM order_item WHERE order_item_id = @OrderItemId";
@@ -359,6 +419,10 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+        /// <summary>
+        /// This method retrieves all products from the database.
+        /// </summary>
+        /// <returns></returns>
         public List<Product> GetAllProducts()
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products";
@@ -396,6 +460,10 @@ namespace FT_Inventory.MVVM.Models
             }
         }
 
+        /// <summary>
+        /// This method retrieves all orders from the database.
+        /// </summary>
+        /// <returns></returns>
         public List<Order> GetAllOrders()
         {
             List<Product> products = this.GetAllProducts();
@@ -405,7 +473,7 @@ namespace FT_Inventory.MVVM.Models
             List<Order> orders = new List<Order>();
             foreach (DataRow row in dataTable.Rows)
             {
-                string orderItemQuery = "SELECT order_item_id, order_id, quantity FROM order_item WHERE order_id = @OrderId";
+                string orderItemQuery = "SELECT order_item_id, order_id, quantity FROM Order_Items WHERE order_id = @OrderId";
                 DataTable dataTable1 = ExecuteQuery(orderItemQuery, new List<SqlParameter> { new SqlParameter("@OrderId", row["order_id"]) });
                 List<OrderItem> orderItems = this.GetOrderItemsByOrderId((int)row["order_id"]);
                 orders.Add(new Order
@@ -420,6 +488,10 @@ namespace FT_Inventory.MVVM.Models
             return orders;
         }
 
+        /// <summary>
+        /// This method retrieves all customers from the database.
+        /// </summary>
+        /// <returns></returns>
         public List<Customer> GetAllCustomers()
         {
             string query = "SELECT customer_id, first_name, last_name, email, phone, address, city, state, postal_code, country, created_at, updated_at, image_url FROM Customers";
@@ -449,6 +521,11 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+        /// <summary>
+        /// This method retrieves all products by its ID.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public List<Product> GetProductsByCategory(string category)
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE category = @Category";
@@ -495,7 +572,7 @@ namespace FT_Inventory.MVVM.Models
         public List<OrderItem> GetOrderItemsByOrderId(int orderId)
         {
             List<Product> products = this.GetAllProducts();
-            string query = "SELECT order_item_id, order_id, product_id, quantity, total_price FROM order_item WHERE order_id = @OrderId";
+            string query = "SELECT order_item_id, order_id, product_id, quantity, total_price FROM order_items WHERE order_id = @OrderId";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@OrderId", orderId)
@@ -541,7 +618,7 @@ namespace FT_Inventory.MVVM.Models
 
         public bool OrderItemExists(OrderItem item)
         {
-            string query = "SELECT COUNT(*) FROM order_item WHERE order_item_id = @OrderItemId";
+            string query = "SELECT COUNT(*) FROM order_items WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@OrderItemId", item.OrderItemId)
