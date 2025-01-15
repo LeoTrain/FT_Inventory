@@ -17,52 +17,48 @@ namespace FT_Inventory.MVVM.Models
             _connectionString = connectionString;
         }
 
-        public int ExecuteNonQuery(string query, List<SqlParameter> parameters = null)
+        private T Execute<T>(Func<SqlCommand, T> action, string query, List<SqlParameter> parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand command = new SqlCommand(query, connection);
-                if (parameters != null)
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    command.Parameters.AddRange(parameters.ToArray());
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        if (parameters != null)
+                            command.Parameters.AddRange(parameters.ToArray());
+                        connection.Open();
+                        return action(command);
+                    }
                 }
-
-                connection.Open();
-                return command.ExecuteNonQuery();
+            }
+            catch (SqlException e)
+            {
+                throw;
             }
         }
 
-        public object ExecuteScalar(string query, List<SqlParameter> parameters = null)
+        private int ExecuteNonQuery(string query, List<SqlParameter> parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                SqlCommand command = new SqlCommand(query, connection);
-                if (parameters != null)
-                {
-                    command.Parameters.AddRange(parameters.ToArray());
-                }
-
-                connection.Open();
-                return command.ExecuteScalar();
-            }
+            return this.Execute(command => command.ExecuteNonQuery(), query, parameters);
         }
 
-        public DataTable ExecuteQuery(string query, List<SqlParameter> parameters = null)
+        private object ExecuteScalar(string query, List<SqlParameter> parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                SqlCommand command = new SqlCommand(query, connection);
-                if (parameters != null)
-                {
-                    command.Parameters.AddRange(parameters.ToArray());
-                }
+            return this.Execute(command => command.ExecuteScalar(), query, parameters);
+        }
 
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
-                DataTable dataTable = new DataTable();
-                connection.Open();
-                dataAdapter.Fill(dataTable);
-                return dataTable;
-            }
+        private DataTable ExecuteQuery(string query, List<SqlParameter> parameters = null)
+        {
+            return Execute(command =>
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    return dataTable;
+                }
+            }, query, parameters);
         }
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
