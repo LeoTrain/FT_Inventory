@@ -32,6 +32,13 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             _dbManager = dbManager;
             _customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
+            if (_customers.Count > 0)
+                _selectedCustomer = _customers[0];
+            else
+            {
+                _selectedCustomer = new Customer();
+                MessageBox.Show("No customers found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             DeleteCustomerCommand = new RelayCommand(o => {
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to proceed?",
                                                           "Confirmation",

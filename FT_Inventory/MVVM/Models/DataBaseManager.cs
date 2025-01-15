@@ -14,7 +14,7 @@ namespace FT_Inventory.MVVM.Models
     {
         private bool _isConnected;
         private string _connectionString;
-
+        public bool IsConnected => _isConnected;
         public DatabaseManager(string connectionString)
         {
             try
@@ -29,6 +29,7 @@ namespace FT_Inventory.MVVM.Models
             }
 
         }
+
 
         /// <summary>
         /// Tries to connect to the database.

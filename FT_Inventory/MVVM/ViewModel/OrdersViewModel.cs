@@ -36,7 +36,10 @@ namespace FT_Inventory.MVVM.ViewModel
             if (Orders.Count > 0)
                 _selectedOrder = Orders[0];
             else
+            {
                 _selectedOrder = new Order(0);
+                MessageBox.Show("No orders found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             DeleteOrderCommand = new RelayCommand(o => DeleteOrder());
         }
 

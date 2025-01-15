@@ -14,6 +14,7 @@ using FT_Inventory.MVVM.Models;
 using System.Printing;
 using System.Windows.Navigation;
 using FT_Inventory.Core.Commands;
+using FT_Inventory.Core.Exceptions;
 
 namespace FT_Inventory.MVVM.ViewModel
 {
@@ -78,24 +79,25 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             try
             {
-                List<Product> productsFromDb = this._dbManager.GetAllProducts();
-                this.Categories = this._dbManager.GetAllProductCategories();
-                if (productsFromDb.Count > 0)
+                if (this._dbManager.IsConnected)
                 {
+                    List<Product> productsFromDb = this._dbManager.GetAllProducts();
+                    this.Categories = this._dbManager.GetAllProductCategories();
                     this.SelectedCategory = Categories[0];
                     this.SelectedProduct = productsFromDb[0];
                     this.Products = new ObservableCollection<Product>(productsFromDb);
                 }
                 else
                 {
-                    this.SelectedCategory = "No Categories";
+                    this.Categories = new string[] { "No Categories" };
+                    this.SelectedCategory = Categories[0];
                     this.SelectedProduct = null;
                     this.Products = new ObservableCollection<Product>();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Unhandled error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("No Products found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.SelectedCategory = "No Categories";
                 this.SelectedProduct = null;
                 this.Products = new ObservableCollection<Product>();
