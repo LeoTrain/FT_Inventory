@@ -49,6 +49,11 @@ namespace FT_Inventory.MVVM.ViewModel
         public RelayCommand AddNewOrderItem { get; }
         public RelayCommand SaveOrderItemCommand { get; }
 
+        public bool HomeViewSelected { get; set; }
+        public bool ProductsViewSelected { get; set;  }
+        public bool CustomersViewSelected { get; set; }
+        public bool OrdersViewSelected { get; set; }
+
         public MainViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
@@ -57,10 +62,10 @@ namespace FT_Inventory.MVVM.ViewModel
             SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
             SwitchToOrderDetailsView = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, o as Order, false)));
             SwitchToOrderItemView = new RelayCommand(o => this.NavigateTo(new OrderItemViewModel(this._dbManager, o as OrderItem, false)));
-            SwitchToHomeView = new RelayCommand(o => this.NavigateTo(new HomeViewModel()));
-            SwitchToProductsView = new RelayCommand(o => this.NavigateTo(new ProductsViewModel(this._dbManager)));
-            SwitchToCustomerView = new RelayCommand(o => this.NavigateTo(new CustomersViewModel(this._dbManager)));
-            SwitchToOrderView = new RelayCommand(o => this.NavigateTo(new OrdersViewModel(this._dbManager)));
+            SwitchToHomeView = new RelayCommand(o => { this.NavigateTo(new HomeViewModel()); this.SwitchSelected(); });
+            SwitchToProductsView = new RelayCommand(o => { this.NavigateTo(new ProductsViewModel(this._dbManager)); this.SwitchSelected(); });
+            SwitchToCustomerView = new RelayCommand(o => { this.NavigateTo(new CustomersViewModel(this._dbManager)); this.SwitchSelected(); });
+            SwitchToOrderView = new RelayCommand(o => { this.NavigateTo(new OrdersViewModel(this._dbManager)); this.SwitchSelected(); });
             GoBackCommand = new RelayCommand(o => this.GoBack());
             AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, new Product(), true)));
             AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, new Customer(), true)));
@@ -117,6 +122,10 @@ namespace FT_Inventory.MVVM.ViewModel
                 else
                     MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
+            HomeViewSelected = true;
+            ProductsViewSelected = false;
+            CustomersViewSelected = false;
+            OrdersViewSelected = false;
         }
 
         public void NavigateTo(object newView)
@@ -354,6 +363,42 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void SwitchSelected()
+        {
+            if (CurrentView is ProductsViewModel)
+            {
+                HomeViewSelected = false;
+                ProductsViewSelected = true;
+                CustomersViewSelected = false;
+                OrdersViewSelected = false;
+            }
+            else if (CurrentView is CustomersViewModel)
+            {
+                HomeViewSelected = false;
+                ProductsViewSelected = false;
+                CustomersViewSelected = true;
+                OrdersViewSelected = false;
+            }
+            else if (CurrentView is OrdersViewModel)
+            {
+                HomeViewSelected = false;
+                ProductsViewSelected = false;
+                CustomersViewSelected = false;
+                OrdersViewSelected = true;
+            }
+            else
+            {
+                HomeViewSelected = true;
+                ProductsViewSelected = false;
+                CustomersViewSelected = false;
+                OrdersViewSelected = false;
+            }
+            OnPropertyChanged(nameof(HomeViewSelected));
+            OnPropertyChanged(nameof(ProductsViewSelected));
+            OnPropertyChanged(nameof(CustomersViewSelected));
+            OnPropertyChanged(nameof(OrdersViewSelected));
         }
     }
 }

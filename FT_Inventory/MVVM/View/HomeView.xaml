@@ -1,43 +1,115 @@
 ﻿<UserControl x:Class="FT_Inventory.MVVM.View.HomeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <TextBlock Text="Discover"
-                      Foreground="Orange"
-                      FontSize="28"
-                      HorizontalAlignment="Left"
-                      Margin="0, 0, 0, 20"/>
+    <Grid>
+        <!-- Header with title -->
+        <StackPanel Margin="20">
+            <TextBlock Text="Welcome to FT Inventory"
+                       Foreground="Orange"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0, 0, 0, 13"/>
+            <TextBlock Text="Manage your products, customers, orders and more in one place!"
+                       Foreground="Gray"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       Margin="0, 0, 0, 40"/>
+        </StackPanel>
 
-        <StackPanel Orientation="Horizontal">
+        <!-- Navigation buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 110, 0, 0">
+            <Button Content="Products"
+                    Width="120"
+                    Height="40"
+                    Background="Orange"
+                    Foreground="White"
+                    BorderBrush="Orange"
+                    BorderThickness="1"
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Command="{Binding DataContext.SwitchToProductsView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="Customers"
+                    Width="120"
+                    Height="40"
+                    Background="Orange"
+                    Foreground="White"
+                    BorderBrush="Orange"
+                    BorderThickness="1"
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Command="{Binding DataContext.SwitchToCustomerView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="Orders"
+                    Width="120"
+                    Height="40"
+                    Background="Orange"
+                    Foreground="White"
+                    BorderBrush="Orange"
+                    BorderThickness="1"
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Command="{Binding DataContext.SwitchToOrderView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="Statistics"
+                    Width="120"
+                    Height="40"
+                    Background="Orange"
+                    Foreground="White"
+                    BorderBrush="Orange"
+                    BorderThickness="1"
+                    Margin="10"
+                    FontSize="14"
+                    FontWeight="SemiBold"/>
+        </StackPanel>
 
+        <!-- Main Content Area with visual cards -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 140, 0, 0">
+            <!-- Hot Products Card -->
             <Border Width="200"
                     Height="200"
                     CornerRadius="10"
-                    Margin="50, 0, 0, 0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
-                        <GradientStop Color="{StaticResource ColorGray}" Offset="0.0"/>
-                        <GradientStop Color="{StaticResource ColorBlack}" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
+                    Margin="20">
                 <StackPanel>
                     <TextBlock Text="Hot Products"
-                                   Foreground="White"
-                                   FontSize="18"
-                                   Margin="20, 10, 10, 0"
-                                   FontFamily="/Fonts/Poppins/#Poppins"
-                                   HorizontalAlignment="Center"/>
+                               Foreground="White"
+                               FontSize="18"
+                               Margin="20, 10, 10, 0"
+                               HorizontalAlignment="Center"
+                               FontFamily="/Fonts/Poppins/#Poppins"/>
                     <Image Width="150"
                            Height="150"
                            Source="/Images/beer.png"
                            HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
+
+            <!-- Statistics Card -->
+            <Border Width="200"
+                    Height="200"
+                    CornerRadius="10"
+                    Margin="20">
+                <StackPanel>
+                    <TextBlock Text="Statistics"
+                               Foreground="White"
+                               FontSize="18"
+                               Margin="20, 10, 10, 0"
+                               HorizontalAlignment="Center"
+                               FontFamily="/Fonts/Poppins/#Poppins"/>
+                    <Image Width="150"
+                           Height="150"
+                           Source="/Images/statistics.png"
+                           HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
-    </StackPanel>
+
+    </Grid>
 </UserControl>
+
