@@ -2,69 +2,173 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using FT_Inventory.Core.Exceptions;
 using Microsoft.Data.SqlClient;
 
 namespace FT_Inventory.MVVM.Models
 {
     public class DatabaseManager
     {
+        private bool _isConnected;
         private string _connectionString;
 
         public DatabaseManager(string connectionString)
         {
-            _connectionString = connectionString;
+            try
+            {
+                _connectionString = connectionString;
+                _isConnected = TryConnection();
+            }
+            catch (DbConnectionException)
+            {
+                _isConnected = false;
+                throw;
+            }
+
         }
 
-        private T Execute<T>(Func<SqlCommand, T> action, string query, List<SqlParameter> parameters = null)
+        /// <summary>
+        /// Tries to connect to the database.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DbConnectionException"></exception>
+        private bool TryConnection()
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        if (parameters != null)
-                            command.Parameters.AddRange(parameters.ToArray());
-                        connection.Open();
-                        return action(command);
-                    }
+                    connection.Open();
+                    return true;
                 }
+            }
+            catch (SqlException e) when (e.Number == 208)
+            {
+                throw new DbConnectionException("Invalid object name. Please check your database schema.");
+            }
+            catch (SqlException e) when (e.Number == 53)
+            {
+                throw new DbConnectionException("The SQL Server instance could not be found. Please check the server name.");
+            }
+            catch (SqlException e) when (e.Number == 18456)
+            {
+                throw new DbConnectionException("Login failed for user. Please check your credentials.");
             }
             catch (SqlException e)
             {
-                throw;
+                throw new DbConnectionException(e);
             }
         }
 
-        private int ExecuteNonQuery(string query, List<SqlParameter> parameters = null)
+        /// <summary>
+        /// Executes a query that returns a single value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="action"></param>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        /// <exception cref="DbConnectionException"></exception>
+        private T Execute<T>(Func<SqlCommand, T> action, string query, List<SqlParameter> parameters = null)
         {
-            return this.Execute(command => command.ExecuteNonQuery(), query, parameters);
+            if (this._isConnected == false)
+                throw new DbConnectionException();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    if (parameters != null)
+                        command.Parameters.AddRange(parameters.ToArray());
+                    connection.Open();
+                    return action(command);
+                }
+            }
         }
 
+        /// <summary>
+        /// Executes a query that returns a single value.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <exception cref="DbConnectionException" />
+        /// <returns></returns>
+        private bool ExecuteNonQuery(string query, List<SqlParameter> parameters = null)
+        {
+            try
+            {
+                return this.Execute(command => command.ExecuteNonQuery(), query, parameters) > 0;
+            }
+            catch (DbConnectionException)
+            {
+                throw new DbConnectionException();
+            }
+
+        }
+
+        /// <summary>
+        /// Executes a query that returns a single value.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         private object ExecuteScalar(string query, List<SqlParameter> parameters = null)
         {
-            return this.Execute(command => command.ExecuteScalar(), query, parameters);
+            try
+            {
+                return this.Execute(command => command.ExecuteScalar(), query, parameters);
+            }
+            catch (DbConnectionException)
+            {
+                throw new DbConnectionException();
+            }
         }
 
+        /// <summary>
+        /// Executes a query that returns a <see cref="DataTable"/>.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="Exception"></exception>
         private DataTable ExecuteQuery(string query, List<SqlParameter> parameters = null)
         {
-            return Execute(command =>
+            try
             {
-                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                return Execute(command =>
                 {
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    return dataTable;
-                }
-            }, query, parameters);
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                    {
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        return dataTable;
+                    }
+                }, query, parameters);
+            }
+            catch (SqlException ex) when (ex.Number == 208) // SQL Server error code 208: Invalid object name
+            {
+                return new DataTable();
+            }
+            catch (SqlException ex)
+            {
+                throw new InvalidOperationException("An error occurred while executing the query. Please check the details.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred during the query execution.", ex);
+            }
+
         }
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-        public int InsertProduct(Product product)
+        public bool InsertProduct(Product product)
         {
+            if (this._isConnected == false)
+                return false;
             string query = "INSERT INTO Products (stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active) " +
                            "VALUES (@Sku, @Name, @Description, @Price, @StockQuantity, @Category, @ImageUrl, @Discount, @IsActive)";
 
@@ -84,8 +188,10 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
-        public int InsertCustomer(Customer customer)
+        public bool InsertCustomer(Customer customer)
         {
+            if (this._isConnected == false)
+                return false;
             string query = "INSERT INTO Customers (first_name, last_name, email, phone, address, city, state, postal_code, country, image_url) " +
                            "VALUES (@FirstName, @LastName, @Email, @Phone, @Address, @City, @State, @PostalCode, @Country, @ImageUrl)";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -104,8 +210,10 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
-        public int InsertOrder(Order order)
+        public bool InsertOrder(Order order)
         {
+            if (this._isConnected == false)
+                return false;
             string query = "INSERT INTO orders (customer_id, created_at) VALUES (@CustomerId, GETDATE())";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -114,7 +222,7 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
-        public int InsertOrderItem(OrderItem orderItem)
+        public bool InsertOrderItem(OrderItem orderItem)
         {
             string query = "INSERT INTO order_item (order_id, product_id, quantity, total_price) VALUES (@OrderId, @ProductId, @Quantity, @TotalPrice)";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -145,7 +253,7 @@ namespace FT_Inventory.MVVM.Models
             new SqlParameter("@Discount", product.Discount),
             new SqlParameter("@IsActive", product.IsActive),
             };
-            return ExecuteNonQuery(query, parameters) > 0;
+            return ExecuteNonQuery(query, parameters);
         }
 
         public bool UpdateCustomer(Customer customer)
@@ -166,7 +274,7 @@ namespace FT_Inventory.MVVM.Models
             new SqlParameter("@Country", customer.Country),
             new SqlParameter("@ImageUrl", customer.ImageUrl)
             };
-            return ExecuteNonQuery(query, parameters) > 0;
+            return ExecuteNonQuery(query, parameters);
         }
 
         public bool UpdateOrder(Order order)
@@ -189,7 +297,7 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@CreatedAt", order.CreatedAt),
                 new SqlParameter("@CustomerId", order.Customer.Id)
             };
-            return ExecuteNonQuery(query, parameters) > 0;
+            return ExecuteNonQuery(query, parameters);
         }
 
         public bool UpdateOrderItem(OrderItem orderItem)
@@ -203,12 +311,12 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
-            return ExecuteNonQuery(query, parameter) > 0;
+            return ExecuteNonQuery(query, parameter);
         }
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-        public int DeleteProduct(Product product)
+        public bool DeleteProduct(Product product)
         {
             string query = "DELETE FROM Products WHERE product_id = @ProductId";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -218,7 +326,7 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
-        public int DeleteCustomer(int customerId)
+        public bool DeleteCustomer(int customerId)
         {
             string query = "DELETE FROM Customers WHERE customer_id = @CustomerId";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -227,7 +335,8 @@ namespace FT_Inventory.MVVM.Models
             };
             return ExecuteNonQuery(query, parameters);
         }
-        public int DeleteOrder(Order order)
+
+        public bool DeleteOrder(Order order)
         {
             string query = "DELETE FROM orders WHERE order_id = @OrderId";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -237,7 +346,7 @@ namespace FT_Inventory.MVVM.Models
             return ExecuteNonQuery(query, parameters);
         }
 
-        public int DeleteOrderItem(OrderItem orderItem)
+        public bool DeleteOrderItem(OrderItem orderItem)
         {
             string query = "DELETE FROM order_item WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -252,29 +361,38 @@ namespace FT_Inventory.MVVM.Models
         public List<Product> GetAllProducts()
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products";
-            DataTable dataTable = ExecuteQuery(query);
-
-            List<Product> products = new List<Product>();
-            foreach (DataRow row in dataTable.Rows)
+            try
             {
-                products.Add(new Product
-                (
-                    (int)row["product_id"],
-                    (string)row["stock_keeping_unit"],
-                    (string)row["name"],
-                    row["description"] as string,
-                    (decimal)row["price"],
-                    (int)row["stock_quantity"],
-                    row["category"] as string,
-                    row["image_url"] as string,
-                    (decimal)row["discount"],
-                    (bool)row["is_active"],
-                    (DateTime)row["created_at"],
-                    (DateTime)row["updated_at"]
-                ));
+                DataTable dataTable = ExecuteQuery(query);
+                List<Product> products = new List<Product>();
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    products.Add(new Product
+                    (
+                        (int)row["product_id"],
+                        (string)row["stock_keeping_unit"],
+                        (string)row["name"],
+                        row["description"] as string,
+                        (decimal)row["price"],
+                        (int)row["stock_quantity"],
+                        row["category"] as string,
+                        row["image_url"] as string,
+                        (decimal)row["discount"],
+                        (bool)row["is_active"],
+                        (DateTime)row["created_at"],
+                        (DateTime)row["updated_at"]
+                    ));
+                }
+                return products;
             }
-
-            return products;
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public List<Order> GetAllOrders()
@@ -330,8 +448,6 @@ namespace FT_Inventory.MVVM.Models
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-
-
         public List<Product> GetProductsByCategory(string category)
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE category = @Category";
@@ -375,8 +491,6 @@ namespace FT_Inventory.MVVM.Models
             return categories.ToArray();
         }
 
-
-
         public List<OrderItem> GetOrderItemsByOrderId(int orderId)
         {
             List<Product> products = this.GetAllProducts();
@@ -402,8 +516,15 @@ namespace FT_Inventory.MVVM.Models
 
         public int GetLastOrderId()
         {
-            string query = "SELECT MAX(order_id) FROM orders";
-            return (int)ExecuteScalar(query);
+            try
+            {
+                string query = "SELECT MAX(order_id) FROM orders";
+                return (int)ExecuteScalar(query);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         public bool OrderExists(int orderId)

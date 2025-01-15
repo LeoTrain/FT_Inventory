@@ -2,7 +2,7 @@
 
 namespace FT_Inventory.Core.Commands
 {
-    internal class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         private Action<object> _execute;
         private Func<object, bool> _canExecute;

@@ -23,6 +23,7 @@ namespace FT_Inventory.MVVM.ViewModel
         private string _selectedCategory;
         private string _searchText;
         public Product SelectedProduct { get; set; }
+        public string[] Categories { get; set; }
         public string SearchText
         {
             get { return _searchText; }
@@ -36,7 +37,6 @@ namespace FT_Inventory.MVVM.ViewModel
                 }
             }
         }
-        public string[] Categories { get; set; }
         public string SelectedCategory
         {
             get { return _selectedCategory; }
@@ -48,7 +48,7 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
         public ObservableCollection<Product> Products { get; set; }
-        public ICommand DeleteProductCommand { get; set; }
+        public RelayCommand DeleteProductCommand { get; set; }
 
         public ProductsViewModel(DatabaseManager dbManager)
         {
@@ -69,16 +69,38 @@ namespace FT_Inventory.MVVM.ViewModel
                         LoadProducts();
                     }
                 }
+                else
+                    MessageBox.Show("Please select a product to delete", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
         }
 
         private void LoadProducts()
         {
-            var productsFromDb = _dbManager.GetAllProducts();
-            Categories = _dbManager.GetAllProductCategories();
-            SelectedCategory = Categories[0];
-            Products = new ObservableCollection<Product>(productsFromDb);
-            SelectedProduct = productsFromDb[0];
+            try
+            {
+                List<Product> productsFromDb = this._dbManager.GetAllProducts();
+                this.Categories = this._dbManager.GetAllProductCategories();
+                if (productsFromDb.Count > 0)
+                {
+                    this.SelectedCategory = Categories[0];
+                    this.SelectedProduct = productsFromDb[0];
+                    this.Products = new ObservableCollection<Product>(productsFromDb);
+                }
+                else
+                {
+                    this.SelectedCategory = "No Categories";
+                    this.SelectedProduct = null;
+                    this.Products = new ObservableCollection<Product>();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unhandled error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.SelectedCategory = "No Categories";
+                this.SelectedProduct = null;
+                this.Products = new ObservableCollection<Product>();
+            }
+
         }
 
         private void UpdateProductsByCategory()
@@ -93,7 +115,8 @@ namespace FT_Inventory.MVVM.ViewModel
             var productsFromDb = _dbManager.GetProductsByCategory(SelectedCategory);
             Products = new ObservableCollection<Product>(productsFromDb);
             OnPropertyChanged(nameof(Products));
-            SelectedProduct = Products[0];
+            if (Products.Count > 0)
+                SelectedProduct = Products[0];
         }
 
         private void UpdateProductsBySearchText()

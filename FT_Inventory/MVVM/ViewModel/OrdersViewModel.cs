@@ -27,13 +27,16 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
 
-        public ICommand DeleteOrderCommand { get; }
+        public RelayCommand DeleteOrderCommand { get; }
 
         public OrdersViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
             Orders = new ObservableCollection<Order>(_dbManager.GetAllOrders());
-            _selectedOrder = Orders[0];
+            if (Orders.Count > 0)
+                _selectedOrder = Orders[0];
+            else
+                _selectedOrder = new Order(0);
             DeleteOrderCommand = new RelayCommand(o => DeleteOrder());
         }
 

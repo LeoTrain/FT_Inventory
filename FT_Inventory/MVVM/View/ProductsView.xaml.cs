@@ -23,12 +23,9 @@ namespace FT_Inventory.MVVM.View
     /// </summary>
     public partial class ProductsView : UserControl
     {
-        private DatabaseManager _dbManager;
         public ProductsView()
         {
             InitializeComponent();
-            _dbManager = new DatabaseManager("Server=desktop-u0s8q19\\SQLEXPRESS;Database=InventoryDb;User Id=tom;Password=1234;TrustServerCertificate=True;");
-            this.DataContext = new ProductsViewModel(_dbManager);
         }
     }
 }
