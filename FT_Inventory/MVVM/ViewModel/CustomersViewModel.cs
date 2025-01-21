@@ -13,9 +13,9 @@ namespace FT_Inventory.MVVM.ViewModel
     class CustomersViewModel : ViewModelBase
     {
         public RelayCommand DeleteCustomerCommand { get; set; }
-        private ObservableCollection<Customer> _customers { get; set; }
-        public ObservableCollection<Customer> Customers { get { return _customers; } }
+        public ObservableCollection<Customer> Customers { get; set; }
         private DatabaseManager _dbManager { get; set; }
+        private string _searchText;
 
         private Customer _selectedCustomer { get; set; }
         public Customer SelectedCustomer
@@ -27,13 +27,26 @@ namespace FT_Inventory.MVVM.ViewModel
                 OnPropertyChanged(nameof(SelectedCustomer));
             }
         }
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged(nameof(SearchText));
+                    this.UpdateCustomersBySearchText();
+                }
+            }
+        }
 
         public CustomersViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
-            _customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
-            if (_customers.Count > 0)
-                _selectedCustomer = _customers[0];
+            Customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
+            if (Customers.Count > 0)
+                _selectedCustomer = Customers[0];
             else
             {
                 _selectedCustomer = new Customer();
@@ -56,12 +69,28 @@ namespace FT_Inventory.MVVM.ViewModel
 
         public void OverwriteCustomers(ObservableCollection<Customer> customers)
         {
-            _customers = customers;
+           Customers = customers;
         }
 
         public void AddCustomer(Customer customer)
         {
-            _customers.Add(customer);
+            Customers.Add(customer);
+        }
+
+        private void UpdateCustomersBySearchText()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                Customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
+            else
+            {
+                var customersFromDb = _dbManager.GetAllCustomers();
+                var filteredProducts = customersFromDb
+                    .Where(p => p.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                Customers = new ObservableCollection<Customer>(filteredProducts);
+            }
+            OnPropertyChanged(nameof(Customers));
         }
     }
 }
