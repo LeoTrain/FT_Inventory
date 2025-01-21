@@ -79,8 +79,16 @@ namespace FT_Inventory.MVVM.ViewModel
                         this.SaveNewProduct(product);
                     else
                         this.SaveExistingProduct(product);
-                    var productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
-                    productsViewModel.LoadProducts();
+                    try
+                    {
+                        ProductsViewModel productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
+                        if (productsViewModel != null)
+                            productsViewModel.LoadProducts();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                     this.GoBack();
                     
                 }
@@ -174,7 +182,6 @@ namespace FT_Inventory.MVVM.ViewModel
                 if (this._dbManager.UpdateProduct(product))
                 {
                     MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.GoBack();
                 }
                 else
                     MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
