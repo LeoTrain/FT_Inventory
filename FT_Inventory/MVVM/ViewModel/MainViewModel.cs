@@ -104,6 +104,8 @@ namespace FT_Inventory.MVVM.ViewModel
                         this.SaveNewCustomer(customer);
                     else
                         this.SaveExistingCustomer(customer);
+
+                    this.GoBack();
                 }
                 else
                     MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
