@@ -9,107 +9,102 @@
              d:DesignHeight="500" d:DesignWidth="700"
              d:DataContext="{d:DesignInstance Type=base:MainWindow}">
 
-    <StackPanel Background="{StaticResource BlackBrush}">
-        <!-- Horizontal Top -->
-        <StackPanel Orientation="Horizontal" Height="250">
-            <!-- Top Left -->
-            <StackPanel Orientation="Vertical" Width="350">
-                <StackPanel Orientation="Horizontal" Margin="5, 10, 0, 0">
-                    <TextBlock Text="Id:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.Id}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="S.K.U.:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.StockKeepingUnit}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.Name}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Description:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.Description}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Price:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.Price}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
+    <Grid Background="{StaticResource BlackBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
+        <!-- Title -->
+        <TextBlock Text="Product Details" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
-            </StackPanel>
-            <!-- Image Top Right -->
-            <StackPanel Width="350">
-                <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="10" Margin="15, 10, 10, 10" Height="230">
-                    <Image x:Name="ProductImage" Source="{Binding CurrentProduct.ImageUrl}" Width="300" Height="210"/>
-                </Border>
-            </StackPanel>
-        </StackPanel>
+        <!-- Main Grid Layout -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Horizontal Bottom -->
-        <StackPanel Orientation="Horizontal" Height="250">
-            <!-- Bottom Left -->
-            <StackPanel Orientation="Vertical" Width="350">
-                <StackPanel Orientation="Horizontal" Margin="5, 0, 0, 0">
-                    <TextBlock Text="Stock Qty:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.StockQuantity}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Category:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.Category}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Image Url:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.ImageUrl}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5, 20, 0, 0">
-                    <TextBlock Text="Is Active:" Style="{StaticResource LabelStyleWhite}"/>
-                    <TextBox Text="{Binding CurrentProduct.IsActive}" Style="{StaticResource InputFieldsFocusable}"/>
-                </StackPanel>
-            </StackPanel>
-            <!-- Bottom Right -->
-            <StackPanel Orientation="Vertical" Width="350">
-                <!-- Input Fields -->
-                <StackPanel Orientation="Vertical" Height="200">
-                    <StackPanel Orientation="Vertical" Width="350">
-                        <StackPanel Orientation="Horizontal" Margin="10, 10, 20, 0">
-                            <TextBlock Text="Discount" Style="{StaticResource LabelStyleWhite}"/>
-                            <TextBox Text="{Binding CurrentProduct.Discount}" Style="{StaticResource InputFieldsFocusable}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
-                            <TextBlock Text="Created At:" Style="{StaticResource LabelStyleWhite}"/>
-                            <TextBlock Text="{Binding CurrentProduct.CreatedAt}" Style="{StaticResource InputFieldUnfocusable}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="10, 20, 20, 0">
-                            <TextBlock Text="Updated At:" Style="{StaticResource LabelStyleWhite}"/>
-                            <TextBlock Text="{Binding CurrentProduct.UpdatedAt}" Style="{StaticResource InputFieldUnfocusable}"/>
-                        </StackPanel>
+            <!-- Left Side (Product Details) -->
+            <Border BorderBrush="White" BorderThickness="1">
+                <StackPanel Grid.Column="0" Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Id:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBlock Text="{Binding CurrentProduct.Id}" Style="{StaticResource InputFieldUnfocusable}" Width="150"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="S.K.U.:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.StockKeepingUnit}" Style="{StaticResource InputFieldsFocusable}" Width="150"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Name:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.Name}" Style="{StaticResource InputFieldsFocusable}" Width="150"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Description:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.Description}" Style="{StaticResource InputFieldsFocusable}" Width="150"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Price:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.Price}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
+                        <TextBlock Text="{Binding CurrencySymbol}" Width="17" Style="{StaticResource LabelStyleWhite}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Discount:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.Discount}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
+                        <TextBlock Text="%" Width="17" Style="{StaticResource LabelStyleWhite}"/>
+                    </StackPanel>
+                    <Border Height="1" Background="White" Margin="0,10,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Active: " Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <CheckBox IsChecked="{Binding CurrentProduct.IsActive}" Style="{StaticResource ModernCheckBoxStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0, 75, 0, 0">
+                        <TextBlock Text="Created at:" Style="{StaticResource LabelStyleWhite}"/>
+                        <TextBlock Text="{Binding CurrentProduct.CreatedAt}" Style="{StaticResource InputFieldUnfocusable}" Width="140"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Updated at:" Style="{StaticResource LabelStyleWhite}"/>
+                        <TextBlock Text="{Binding CurrentProduct.UpdatedAt}" Style="{StaticResource InputFieldUnfocusable}" Width="140"/>
                     </StackPanel>
                 </StackPanel>
-                
-                <!-- Buttons -->
-                <StackPanel Orientation="Horizontal" Height="50">
-                    <Grid Width="360">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="110"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="120"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Cancel"
-                                Grid.Column="1" 
-                                Style="{StaticResource BaseDetailsViewButton}"
-                                Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                AncestorType={x:Type Window}}, Path=DataContext.GoBackCommand}"
-                                CommandParameter="{Binding}"/>
-                        <Button Content="Save"
-                                Grid.Column="2" 
-                                Style="{StaticResource BaseDetailsViewButton}"
-                                Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                AncestorType={x:Type Window}}, Path=DataContext.SaveProductCommand}"
-                                CommandParameter="{Binding CurrentProduct}"/>
+            </Border>
 
-                    </Grid>
+            <!-- Right Side (Image & Extra Info) -->
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="5" CornerRadius="5" Padding="5">
+                    <Image x:Name="ProductImage" Source="{Binding CurrentProduct.ImageUrl}" Width="250" Height="200" Stretch="Uniform"/>
+                </Border>
+                <Button Content="Change Image" Style="{StaticResource EditButtonTheme}"
+                        Width="100" Command="{Binding ChangeImageCommand}"/>
+                <StackPanel Margin="10,20,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Stock Qty:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <TextBox Text="{Binding CurrentProduct.StockQuantity}" Style="{StaticResource InputFieldsFocusable}" Width="200"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Category:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
+                        <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding CurrentProduct.Category}" Width="150"/>
+                        <Button Command="{Binding AddCategoryCommand}" Width="50" Background="White"
+                                Content="Add"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Cancel" Style="{StaticResource BaseDetailsViewButton}" Width="100"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                      AncestorType={x:Type Window}}, 
+                                      Path=DataContext.GoBackCommand}"/>
+            <Button Content="Save" Style="{StaticResource BaseDetailsViewButton}" Width="100"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                      AncestorType={x:Type Window}}, 
+                                      Path=DataContext.SaveProductCommand}"
+                    CommandParameter="{Binding CurrentProduct}"/>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </UserControl>
+
