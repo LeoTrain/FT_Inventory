@@ -6,66 +6,64 @@
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="525" d:DesignWidth="720">
-    <Grid>
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 0, 0, 10">
-                <ComboBox Height="40" Width="50" VerticalAlignment="Bottom" Style="{StaticResource ComboBoxFilterTheme}">
-                    <ComboBoxItem IsSelected="True">Id</ComboBoxItem>
-                    <ComboBoxItem>Name</ComboBoxItem>
-                    <ComboBoxItem>Price</ComboBoxItem>
-                </ComboBox>
+    <Grid Background="{StaticResource BlackBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-                <TextBox Width="400"
-                     Height="40"
-                     Margin="0, 20, 0, 0"
-                     Grid.Column="1"
-                     Style="{StaticResource ModernTextBox}"/>
-                <Button Content="Add"
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch"  Background="DarkOrange" Height="50">
+            <TextBlock Text="Order Management" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="150, 0, 0, 0">
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Background="PeachPuff"
+                         Width="250"
+                         Height="35"
+                         Margin="10,0"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"/>
+                <Button Content="➕ Add"
                         Style="{StaticResource EditButtonTheme}"
-                        Foreground="{StaticResource WhiteBrush}"
-                        Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                  AncestorType={x:Type Window}}, Path=DataContext.AddNewOrderCommand}"
-                        CommandParameter="{Binding}"
-                        Width="50"
-                        Margin="10, 20, 0, 0"/>
+                        Command="{Binding DataContext.AddNewOrderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Height="40"
+                        Width="80"
+                        Margin="10,0"/>
             </StackPanel>
-
-            <DataGrid ItemsSource="{Binding Orders}"
-                      SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
-                      Style="{StaticResource ProductsDataGridTheme}"
-                      MaxHeight="400"
-                      MaxWidth="700">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Order Id" Binding="{Binding OrderId}" Width="60"/>
-                    <DataGridTextColumn Header="Customer Id" Binding="{Binding Customer.Id}" Width="80"/>
-                    <DataGridTextColumn Header="Creation Time" Binding="{Binding CreatedAt}" Width="130"/>
-                    <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="70"/>
-                    <DataGridTemplateColumn Header="Actions" Width="120">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="Delete"
-                                            Style="{StaticResource DeleteButtonTheme}"
-                                            Foreground="{StaticResource WhiteBrush}"
-                                            Width="50"
-                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                            AncestorType={x:Type UserControl}}, Path=DataContext.DeleteOrderCommand}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="Edit"
-                                            Style="{StaticResource EditButtonTheme}"
-                                            Foreground="{StaticResource WhiteBrush}"
-                                            Width="50"
-                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                            AncestorType={x:Type Window}}, Path=DataContext.SwitchToOrderDetailsView}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-
         </StackPanel>
 
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Orders}"
+                  SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
+                  Style="{StaticResource ProductsDataGridTheme}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Order Id" Binding="{Binding OrderId}" Width="70"/>
+                <DataGridTextColumn Header="Customer Id" Binding="{Binding Customer.Id}" Width="100"/>
+                <DataGridTextColumn Header="Customer Name" Binding="{Binding Customer.FullName}" Width="150"/>
+                <DataGridTextColumn Header="Creation Time" Binding="{Binding CreatedAt}" Width="140"/>
+                <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice, StringFormat={}{0:C}}" Width="90"/>
+                <DataGridTemplateColumn Header="Actions" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="✏ Edit"
+                                        Style="{StaticResource EditButtonTheme}"
+                                        Command="{Binding DataContext.SwitchToOrderDetailsView, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Width="60"/>
+                                <Button Content="🗑 Delete"
+                                        Style="{StaticResource DeleteButtonTheme}"
+                                        Command="{Binding DataContext.DeleteOrderCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Width="60"
+                                        Margin="5,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

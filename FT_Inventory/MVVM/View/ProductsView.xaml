@@ -4,103 +4,75 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
-             xmlns:base="clr-namespace:FT_Inventory"
              xmlns:viewModels="clr-namespace:FT_Inventory.MVVM.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="525" d:DesignWidth="720">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="11*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 0, 0, 10">
-                <ComboBox Height="40" Width="50"
-                          VerticalAlignment="Bottom"
+    <Grid Background="{StaticResource BlackBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch"  Background="DarkOrange" Height="50">
+            <TextBlock Text="Product Management" Foreground="White" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="5, 0, 0, 0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20, 0, 5, 0">
+                <ComboBox Height="40" Width="100"
                           Style="{StaticResource ComboBoxFilterTheme}"
-                          ItemsSource="{Binding Path=Categories}"
+                          ItemsSource="{Binding Categories}"
                           SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
-
-                <TextBox Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     IsReadOnly="False"
-                     Width="400"
-                     Height="40"
-                     Margin="0, 20, 0, 0"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     VerticalContentAlignment="Center"/>
-
-                <Button Content="Add"
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Background="PeachPuff"
+                         Width="250"
+                         Height="35"
+                         Margin="10,0"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"/>
+                <Button Content="➕ Add"
                         Style="{StaticResource EditButtonTheme}"
-                        Foreground="{StaticResource WhiteBrush}"
-                        Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                  AncestorType={x:Type Window}}, Path=DataContext.AddNewProductCommand}"
-                        CommandParameter="{Binding}"
-                        Width="50"
-                        Margin="10, 20, 0, 0"/>
-
+                        Command="{Binding DataContext.AddNewProductCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Height="40"
+                        Width="80"
+                        Margin="10,0"/>
             </StackPanel>
-
-            <DataGrid ItemsSource="{Binding Products}"
-                      SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
-                      Style="{StaticResource ProductsDataGridTheme}"
-                      MaxHeight="400"
-                      MaxWidth="700">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="50">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenteredColumnStyle}" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenteredColumnStyle}" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="250"/>
-                    <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C}}" Width="90">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenteredColumnStyle}" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="90">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenteredColumnStyle}" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100"/>
-                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount, StringFormat={}{0:0.00}}" Width="90">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenteredColumnStyle}" />
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Active" Binding="{Binding IsActive}" Width="90"/>
-                    <DataGridTextColumn Header="Last Update" Binding="{Binding UpdatedAt}" Width="150"/>
-                    <DataGridTemplateColumn Header="Actions" Width="120">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="Delete"
-                                            Style="{StaticResource DeleteButtonTheme}"
-                                            Foreground="{StaticResource WhiteBrush}"
-                                            Width="50"
-                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                            AncestorType={x:Type UserControl}}, Path=DataContext.DeleteProductCommand}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="Edit"
-                                            Style="{StaticResource EditButtonTheme}"
-                                            Foreground="{StaticResource WhiteBrush}"
-                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                            AncestorType={x:Type Window}}, Path=DataContext.SwitchToProductDetailsView}"
-                                            CommandParameter="{Binding}"
-                                            Width="50"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-
         </StackPanel>
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Products}"
+                  SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                  Style="{StaticResource ProductsDataGridTheme}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="250"/>
+                <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C}}" Width="90"/>
+                <DataGridTextColumn Header="Stock" Binding="{Binding StockQuantity}" Width="80"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="120"/>
+                <DataGridTextColumn Header="Discount" Binding="{Binding Discount, StringFormat={}{0:0.00}}" Width="90"/>
+                <DataGridTextColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
+                <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" Width="150"/>
+                <DataGridTemplateColumn Header="Actions" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="✏ Edit"
+                                        Style="{StaticResource EditButtonTheme}"
+                                        Command="{Binding DataContext.SwitchToProductDetailsView, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Width="60"/>
+                                <Button Content="🗑 Delete"
+                                        Style="{StaticResource DeleteButtonTheme}"
+                                        Command="{Binding DataContext.DeleteProductCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Width="60"
+                                        Margin="5,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

@@ -12,7 +12,6 @@ namespace FT_Inventory.MVVM.ViewModel
     internal class OrderItemViewModel : ViewModelBase
     {
         private DatabaseManager dbManager;
-
         private OrderItem _currentOrderItem;
         private Product _selectedProduct;
         public RelayCommand IncrementQuantityCommand { get; set; }
@@ -27,6 +26,7 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
 
+        public Product CurrentProduct { get; private set; }
         public string SelectedProduct
         {
             get { return _selectedProduct.Name; }
@@ -36,7 +36,9 @@ namespace FT_Inventory.MVVM.ViewModel
                     if (product.Name == value)
                     {
                         _selectedProduct = product;
+                        CurrentProduct = product;
                         OnPropertyChanged(nameof(SelectedProduct));
+                        OnPropertyChanged(nameof(CurrentProduct));
                         this.LoadProduct();
                     }
             }
@@ -50,11 +52,12 @@ namespace FT_Inventory.MVVM.ViewModel
             dbManager = _dbManager;
             CurrentOrderItem = currentOrderItem;
             IsNewOrderItem = isNewOrderItem;
-            IncrementQuantityCommand = new RelayCommand(this.IncrementQuantity);
-            DecrementQuantityCommand = new RelayCommand(this.DecrementQuantity);
             AllProducts = this.dbManager.GetAllProducts();
             AllProductsName = AllProducts.Select(p => p.Name).ToList();
             _selectedProduct = AllProducts[0];
+            IncrementQuantityCommand = new RelayCommand(this.IncrementQuantity);
+            DecrementQuantityCommand = new RelayCommand(this.DecrementQuantity);
+
         }
 
         private void IncrementQuantity(object obj)

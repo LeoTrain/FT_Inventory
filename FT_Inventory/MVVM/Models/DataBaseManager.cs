@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using FT_Inventory.Core.Exceptions;
@@ -597,6 +598,19 @@ namespace FT_Inventory.MVVM.Models
             try
             {
                 string query = "SELECT MAX(order_id) FROM orders";
+                return (int)ExecuteScalar(query);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        public int GetLasstOrderItemId()
+        {
+            try
+            {
+                string query = "SELECT MAX(order_item_id) FROM order_items";
                 return (int)ExecuteScalar(query);
             }
             catch (Exception)

@@ -7,7 +7,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ComboBox}">
                         <Grid>
-                            <Border CornerRadius="10" BorderThickness="2" Background="LightGray">
+                            <Border CornerRadius="10" BorderThickness="2" Background="PeachPuff">
                                 <ToggleButton Name="ToggleButton"
                                           IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                           Background="Transparent" 

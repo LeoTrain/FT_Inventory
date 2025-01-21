@@ -2,11 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Style TargetType="{x:Type DataGrid}"
            x:Key="ProductsDataGridTheme">
-
+        <!-- General Grid settings -->
         <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-
         <Setter Property="FrozenColumnCount" Value="1"/>
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="CanUserDeleteRows" Value="False"/>
@@ -16,48 +15,56 @@
         <Setter Property="CanUserSortColumns" Value="True"/>
         <Setter Property="IsReadOnly" Value="True"/>
 
+        <!-- Selection and alternation settings -->
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="SelectionUnit" Value="FullRow"/>
         <Setter Property="AlternationCount" Value="1"/>
         <Setter Property="AlternatingRowBackground" Value="{StaticResource LightGrayBrush}"/>
         <Setter Property="RowBackground" Value="{StaticResource SoftGrayBrush}"/>
 
+        <!-- Background and border settings -->
         <Setter Property="Background" Value="{StaticResource IntenseBlackBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource IntenseBlackBrush}" />
         <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource GrayBrush}" />
         <Setter Property="VerticalGridLinesBrush" Value="{StaticResource GrayBrush}" />
         <Setter Property="ColumnHeaderStyle" Value="{StaticResource {x:Type DataGridColumnHeader}}"/>
 
-
+        <!-- Cell Style -->
         <Setter Property="CellStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Style.Triggers>
                         <!-- Highlight selected rows -->
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{StaticResource TealBrush}" />
+                            <Setter Property="Background" Value="Orange" />
                             <Setter Property="BorderBrush" Value="Transparent" />
-                            <Setter Property="Foreground" Value="{StaticResource BlackBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter Property="Background" Value="{StaticResource TealBrush}" />
+                            <Setter Property="Background" Value="Orange" />
                             <Setter Property="BorderBrush" Value="{StaticResource BlackBrush}" />
-                            <Setter Property="BorderThickness" Value="1"/>
-                            <Setter Property="Foreground" Value="{StaticResource BlackBrush}" />
+                            <Setter Property="BorderThickness" Value="2"/>
+                            <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
+                        </Trigger>
+                        <!-- Hover effect for cells -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Orange" />
+                            <Setter Property="BorderBrush" Value="DarkOrange" />
                         </Trigger>
                     </Style.Triggers>
-                    <!-- Add some padding around the contents of a cell -->
-                    <Setter Property="Padding" Value="4,3,4,3" />
+
+                    <!-- Padding and Template for cell content -->
+                    <Setter Property="Padding" Value="6,4"/>
                     <Setter Property="BorderBrush" Value="Transparent"/>
                     <Setter Property="BorderThickness" Value="1"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type DataGridCell}">
                                 <Border Padding="{TemplateBinding Padding}" 
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            Background="{TemplateBinding Background}">
-                                    <ContentPresenter />
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                             </ControlTemplate>
                         </Setter.Value>
