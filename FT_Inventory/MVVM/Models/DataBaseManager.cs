@@ -410,7 +410,7 @@ namespace FT_Inventory.MVVM.Models
         /// <returns></returns>
         public bool DeleteOrderItem(OrderItem orderItem)
         {
-            string query = "DELETE FROM order_item WHERE order_item_id = @OrderItemId";
+            string query = "DELETE FROM order_items WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
                 new SqlParameter("@OrderItemId", orderItem.OrderItemId)

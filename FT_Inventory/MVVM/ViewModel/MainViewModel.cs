@@ -128,10 +128,11 @@ namespace FT_Inventory.MVVM.ViewModel
                 {
                     OrderItemViewModel currentView = CurrentView as OrderItemViewModel;
                     currentView.LoadProduct();
-                    if (orderItem.OrderItemId == 0)
+                    if (currentView.CurrentOrderItem.OrderItemId == 0)
                         this.SaveNewOrderItem(orderItem);
                     else
-                        this.SaveExistingOrderItem(orderItem);
+                        this.SaveExistingOrderItem(currentView.CurrentOrderItem);
+                    OnPropertyChanged(nameof(currentView.CurrentProduct));
                 }
                 else
                     MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -334,11 +335,12 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             try
             {
-                MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 OrderDetailsViewModel odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
+                orderItem.OrderItemId = this._dbManager.GetLasstOrderItemId() + 1;
                 odvm.CurrentOrder.OrderItems.Add(orderItem);
                 odvm.CurrentOrder.CalculateTotalPrice();
                 this.OnPropertyChanged(nameof(odvm.CurrentOrder));
+                MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
             }
             catch (Exception ex)
@@ -364,7 +366,7 @@ namespace FT_Inventory.MVVM.ViewModel
                     ovm.SelectedOrder = odvm.CurrentOrder;
                 }
                 else
-                    MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Error saving the order item. Please save the Order if you created a new OrderItem", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (SqlException ex)
             {

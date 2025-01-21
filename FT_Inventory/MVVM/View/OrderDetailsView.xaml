@@ -49,18 +49,11 @@
             </Grid>
         </GroupBox>
 
-        <!-- Image Section (Right Side) -->
-        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Height="220">
-            <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="5" CornerRadius="5">
-                <Image x:Name="OrderImage" Source="{Binding CurrentOrder.ImageUrl}" Width="200" Height="200"/>
-            </Border>
-        </StackPanel>
-
         <!-- Order Items -->
         <GroupBox Header="Order Items" Foreground="White" Grid.Row="1" Grid.Column="0" Padding="10">
             <Grid>
                 <!-- ScrollViewer to make the ItemsControl scrollable -->
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="120" Width="375"
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="200" Width="375"
                               HorizontalAlignment="Left">
                     <ItemsControl ItemsSource="{Binding CurrentOrder.OrderItems}" Margin="0,0,0,10">
                         <ItemsControl.ItemTemplate>
@@ -71,6 +64,7 @@
                                         <ColumnDefinition Width="1*"/>
                                         <ColumnDefinition Width="1*"/>
                                         <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
@@ -84,6 +78,12 @@
                                     Grid.Column="4" 
                                     Width="50" 
                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Button Content="Delete"
+                                            Command="{Binding DataContext.DeleteOrderItemCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            Grid.Column="5"
+                                            Width="50"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -97,22 +97,20 @@
         <!-- Bottom Section (Created At, Updated At & Buttons) -->
         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,19,2,0" Height="100">
             <TextBlock Text="Created At:" Style="{StaticResource LabelStyleWhite}" />
-            <TextBlock Text="{Binding CurrentOrder.CreatedAt}" Style="{StaticResource InputFieldUnfocusable}" Width="100"/>
-
-            <TextBlock Text="Updated At:" Style="{StaticResource LabelStyleWhite}" />
-            <TextBlock Text="{Binding CurrentOrder.UpdatedAt}" Style="{StaticResource InputFieldUnfocusable}" Width="100"/>
+            <TextBlock Text="{Binding CurrentOrder.CreatedAt}" Style="{StaticResource InputFieldUnfocusable}" Width="220"/>
         </StackPanel>
 
         <!-- Buttons -->
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 20, 5, 0">
-            <Button Content="Cancel"
-                    Style="{StaticResource BaseDetailsViewButton}"
-                    Command="{Binding GoBackCommand}"/>
-            <Button Content="Save"
-                    Margin="10,0,0,0"
-                    Style="{StaticResource BaseDetailsViewButton}"
-                    Command="{Binding SaveOrderCommand}"
-                    CommandParameter="{Binding}"/>
+            <Button Content="Cancel" Style="{StaticResource BaseDetailsViewButton}" Width="100"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                      AncestorType={x:Type Window}}, 
+                                      Path=DataContext.GoBackCommand}"/>
+            <Button Content="Save" Style="{StaticResource BaseDetailsViewButton}" Width="100"
+                    Command="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                      AncestorType={x:Type Window}}, 
+                                      Path=DataContext.SaveOrderCommand}"
+                    CommandParameter="{Binding CurrentOrder}"/>
         </StackPanel>
     </Grid>
 </UserControl>

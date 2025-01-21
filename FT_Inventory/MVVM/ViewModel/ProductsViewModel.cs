@@ -25,6 +25,9 @@ namespace FT_Inventory.MVVM.ViewModel
         private string _searchText;
         public Product SelectedProduct { get; set; }
         public string[] Categories { get; set; }
+        public ObservableCollection<Product> Products { get; set; }
+        public RelayCommand DeleteProductCommand { get; set; }
+
         public string SearchText
         {
             get { return _searchText; }
@@ -48,8 +51,6 @@ namespace FT_Inventory.MVVM.ViewModel
                 this.UpdateProductsByCategory();
             }
         }
-        public ObservableCollection<Product> Products { get; set; }
-        public RelayCommand DeleteProductCommand { get; set; }
 
         public ProductsViewModel(DatabaseManager dbManager)
         {

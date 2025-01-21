@@ -51,10 +51,17 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             dbManager = _dbManager;
             CurrentOrderItem = currentOrderItem;
+            CurrentOrderItem.ProductId = currentOrderItem.Product.Id;
             IsNewOrderItem = isNewOrderItem;
             AllProducts = this.dbManager.GetAllProducts();
             AllProductsName = AllProducts.Select(p => p.Name).ToList();
-            _selectedProduct = AllProducts[0];
+            SelectedProduct = currentOrderItem.Product.Name;
+            if (IsNewOrderItem)
+            {
+                CurrentOrderItem.Product = AllProducts[0];
+                CurrentOrderItem.ProductId = AllProducts[0].Id;
+                SelectedProduct = CurrentOrderItem.Product.Name;
+            }
             IncrementQuantityCommand = new RelayCommand(this.IncrementQuantity);
             DecrementQuantityCommand = new RelayCommand(this.DecrementQuantity);
 
@@ -80,7 +87,9 @@ namespace FT_Inventory.MVVM.ViewModel
         public void LoadProduct()
         {
             CurrentOrderItem.Product = _selectedProduct;
+            CurrentProduct = _selectedProduct;
             OnPropertyChanged(nameof(CurrentOrderItem));
+            OnPropertyChanged(nameof(CurrentProduct));
         }
 
     }
