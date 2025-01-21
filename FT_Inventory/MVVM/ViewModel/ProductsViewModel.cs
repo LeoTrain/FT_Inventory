@@ -75,7 +75,7 @@ namespace FT_Inventory.MVVM.ViewModel
             });
         }
 
-        private void LoadProducts()
+        public void LoadProducts()
         {
             try
             {

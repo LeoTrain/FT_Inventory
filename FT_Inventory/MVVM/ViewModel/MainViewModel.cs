@@ -79,6 +79,10 @@ namespace FT_Inventory.MVVM.ViewModel
                         this.SaveNewProduct(product);
                     else
                         this.SaveExistingProduct(product);
+                    var productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
+                    productsViewModel.LoadProducts();
+                    this.GoBack();
+                    
                 }
                 else
                     MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -193,7 +197,6 @@ namespace FT_Inventory.MVVM.ViewModel
                 if (_dbManager.UpdateCustomer(customer))
                 {
                     MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.GoBack();
                 }
                 else
                     MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -220,7 +223,6 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 this._dbManager.InsertProduct(product);
                 MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                GoBack();
             }
             catch (Exception ex)
             {
