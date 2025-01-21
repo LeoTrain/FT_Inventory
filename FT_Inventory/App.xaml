@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="Theme/InputFieldUnfocusable.xaml"/>
                 <ResourceDictionary Source="Theme/DetailsViewButton.xaml"/>
                 <ResourceDictionary Source="Theme/ModernCheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="Theme/SearchBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
