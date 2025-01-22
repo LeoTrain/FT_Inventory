@@ -17,6 +17,7 @@ namespace FT_Inventory.MVVM.ViewModel
         private DatabaseManager _dbManager { get; set; }
         public ObservableCollection<Order> Orders { get; set; }
         private Order _selectedOrder { get; set; }
+        private string _searchText;
         public Order SelectedOrder
         {
             get => _selectedOrder;
@@ -24,6 +25,16 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 _selectedOrder = value;
                 OnPropertyChanged(nameof(SelectedOrder));
+            }
+        }
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                this.UpdateOrdersBySearchText();
             }
         }
 
@@ -57,6 +68,22 @@ namespace FT_Inventory.MVVM.ViewModel
                     this.Orders.Remove(SelectedOrder);
                 }
             }
+        }
+
+        private void UpdateOrdersBySearchText()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                Orders = new ObservableCollection<Order>(_dbManager.GetAllOrders());
+            else
+            {
+                var ordersFromDb = _dbManager.GetAllOrders();
+                var filteredOrders = ordersFromDb
+                    .Where(o => o.Customer.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                Orders = new ObservableCollection<Order>(filteredOrders);
+            }
+            OnPropertyChanged(nameof(Orders));
         }
     }
 }
