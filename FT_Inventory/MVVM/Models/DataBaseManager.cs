@@ -145,7 +145,8 @@ namespace FT_Inventory.MVVM.Models
                     using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                     {
                         DataTable dataTable = new DataTable();
-                        adapter.Fill(dataTable);
+                        if (adapter != null)
+                            adapter.Fill(dataTable);
                         return dataTable;
                     }
                 }, query, parameters);
@@ -153,10 +154,6 @@ namespace FT_Inventory.MVVM.Models
             catch (SqlException ex) when (ex.Number == 208) // SQL Server error code 208: Invalid object name
             {
                 return new DataTable();
-            }
-            catch (SqlException ex)
-            {
-                throw new InvalidOperationException("An error occurred while executing the query. Please check the details.", ex);
             }
             catch (Exception ex)
             {
@@ -467,26 +464,34 @@ namespace FT_Inventory.MVVM.Models
         /// <returns></returns>
         public List<Order> GetAllOrders()
         {
-            List<Product> products = this.GetAllProducts();
-            List<Customer> customers = this.GetAllCustomers();
-            string query = "SELECT order_id, customer_id, created_at FROM orders";
-            DataTable dataTable = ExecuteQuery(query);
-            List<Order> orders = new List<Order>();
-            foreach (DataRow row in dataTable.Rows)
+            try
             {
-                string orderItemQuery = "SELECT order_item_id, order_id, quantity FROM Order_Items WHERE order_id = @OrderId";
-                DataTable dataTable1 = ExecuteQuery(orderItemQuery, new List<SqlParameter> { new SqlParameter("@OrderId", row["order_id"]) });
-                List<OrderItem> orderItems = this.GetOrderItemsByOrderId((int)row["order_id"]);
-                orders.Add(new Order
-                (
-                    (int)row["order_id"],
-                    customers.FirstOrDefault(customer => customer.Id == (int)row["customer_id"]),
-                    (DateTime)row["created_at"],
-                    orderItems
+                List<Product> products = this.GetAllProducts();
+                List<Customer> customers = this.GetAllCustomers();
+                string query = "SELECT order_id, customer_id, created_at FROM orders";
+                DataTable dataTable = ExecuteQuery(query);
+                List<Order> orders = new List<Order>();
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    string orderItemQuery = "SELECT order_item_id, order_id, quantity FROM Order_Items WHERE order_id = @OrderId";
+                    DataTable dataTable1 = ExecuteQuery(orderItemQuery, new List<SqlParameter> { new SqlParameter("@OrderId", row["order_id"]) });
+                    List<OrderItem> orderItems = this.GetOrderItemsByOrderId((int)row["order_id"]);
+                    orders.Add(new Order
+                    (
+                        (int)row["order_id"],
+                        customers.FirstOrDefault(customer => customer.Id == (int)row["customer_id"]),
+                        (DateTime)row["created_at"],
+                        orderItems
 
-                ));
+                    ));
+                }
+                return orders;
             }
-            return orders;
+            catch (Exception)
+            {
+                return new List<Order>();
+            }
+
         }
 
         /// <summary>

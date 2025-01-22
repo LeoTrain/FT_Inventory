@@ -1,0 +1,52 @@
+CREATE TABLE [inventoryDb].[dbo].[Products] (
+    [product_id] INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrémenté, clé primaire
+    [stock_keeping_unit] VARCHAR(50),           -- SKU, chaîne de caractères de longueur maximale 50
+    [name] VARCHAR(255),                        -- Nom du produit, chaîne de caractères de longueur maximale 255
+    [description] TEXT,                         -- Description du produit, texte long
+    [price] DECIMAL(18, 2),                     -- Prix, type numérique avec 2 décimales
+    [stock_quantity] INT,                       -- Quantité en stock, entier
+    [category] VARCHAR(100),                    -- Catégorie du produit, chaîne de caractères de longueur maximale 100
+    [image_url] VARCHAR(255),                   -- URL de l'image, chaîne de caractères de longueur maximale 255
+    [discount] DECIMAL(5, 2),                   -- Remise en pourcentage, numérique avec 2 décimales
+    [is_active] BIT,                            -- Statut actif/inactif, type booléen
+    [created_at] DATETIME DEFAULT GETDATE(),    -- Date de création, valeur par défaut = date actuelle
+    [updated_at] DATETIME DEFAULT GETDATE()     -- Date de mise à jour, valeur par défaut = date actuelle
+);
+
+
+CREATE TABLE [inventoryDb].[dbo].[Customers] (
+    [customer_id] INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrémenté, clé primaire
+    [first_name] VARCHAR(100),                   -- Prénom du client
+    [last_name] VARCHAR(100),                    -- Nom de famille du client
+    [email] VARCHAR(255),                        -- Adresse email du client
+    [phone] VARCHAR(50),                         -- Numéro de téléphone du client
+    [address] VARCHAR(255),                      -- Adresse du client
+    [city] VARCHAR(100),                         -- Ville du client
+    [state] VARCHAR(100),                        -- État ou province du client
+    [postal_code] VARCHAR(20),                   -- Code postal du client
+    [country] VARCHAR(100),                      -- Pays du client
+    [image_url] VARCHAR(255),                    -- URL de l'image du client (par exemple, photo de profil)
+    [created_at] DATETIME DEFAULT GETDATE(),     -- Date de création
+    [updated_at] DATETIME DEFAULT GETDATE()      -- Date de mise à jour
+);
+
+
+CREATE TABLE [inventoryDb].[dbo].[orders] (
+    [order_id] INT IDENTITY(1,1) PRIMARY KEY,     -- Identifiant unique de la commande (auto-incrémenté)
+    [customer_id] INT,                             -- Identifiant du client
+    [created_at] DATETIME DEFAULT GETDATE(),       -- Date de création de la commande
+    [updated_at] DATETIME DEFAULT GETDATE()        -- Date de mise à jour
+);
+
+
+CREATE TABLE [inventoryDb].[dbo].[order_items] (
+    [order_item_id] INT IDENTITY(1,1) PRIMARY KEY,  -- Identifiant unique de l'élément de commande
+    [order_id] INT,                                  -- Identifiant de la commande (clé étrangère vers `orders`)
+    [product_id] INT,                                -- Identifiant du produit (clé étrangère vers `products`)
+    [quantity] INT,                                  -- Quantité du produit dans la commande
+    [total_price] DECIMAL(18, 2),                    -- Prix total pour cet élément de commande
+    [created_at] DATETIME DEFAULT GETDATE(),         -- Date de création de l'élément de commande
+    [updated_at] DATETIME DEFAULT GETDATE(),         -- Date de mise à jour
+    FOREIGN KEY ([order_id]) REFERENCES [inventoryDb].[dbo].[orders]([order_id]),  -- Clé étrangère vers `orders`
+    FOREIGN KEY ([product_id]) REFERENCES [inventoryDb].[dbo].[Products]([product_id]) -- Clé étrangère vers `Products`
+);

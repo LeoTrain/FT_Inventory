@@ -26,7 +26,7 @@ namespace FT_Inventory
             InitializeComponent();
             try
             {
-                this.dbManager = new DatabaseManager("Server=desktop-u0s8q19\\SQLEXPRESS;Database=InventoryDb;Trusted_Connection=True;TrustServerCertificate=True;");
+                this.dbManager = new DatabaseManager("Server=B101-03;Database=InventoryDb;Trusted_Connection=True;TrustServerCertificate=True;");
                 DataContext = new MainViewModel(this.dbManager);
             }
             catch (DbConnectionException e)
