@@ -118,6 +118,10 @@ namespace FT_Inventory.MVVM.ViewModel
                         this.SaveExistingOrder(order);
                     else
                         this.SaveNewOrder(order);
+                    this.GoBack();
+                    var ordersViewModel = this.CurrentView as OrdersViewModel;
+                    ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders());
+                    OnPropertyChanged(nameof(ordersViewModel.Orders));
                 }
                 else
                     MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -286,15 +290,15 @@ namespace FT_Inventory.MVVM.ViewModel
                 odvm.CurrentOrder.CalculateTotalPrice();
                 if (this._dbManager.InsertOrder(order))
                 {
-                    MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     foreach (OrderItem orderItem in order.OrderItems)
-                    {
                         this._dbManager.InsertOrderItem(orderItem);
-                    }
-                    this.GoBack();
                 }
                 else
+                { 
                     MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
             catch (SqlException exception)
@@ -313,10 +317,7 @@ namespace FT_Inventory.MVVM.ViewModel
             try
             {
                 if (this._dbManager.UpdateOrder(order))
-                {
                     MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.GoBack();
-                }
                 else
                     MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
