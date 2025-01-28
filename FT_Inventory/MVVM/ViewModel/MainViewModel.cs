@@ -120,8 +120,12 @@ namespace FT_Inventory.MVVM.ViewModel
                         this.SaveNewOrder(order);
                     this.GoBack();
                     var ordersViewModel = this.CurrentView as OrdersViewModel;
-                    ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders());
-                    OnPropertyChanged(nameof(ordersViewModel.Orders));
+                    if (ordersViewModel != null)
+                    {
+                        ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders());
+                        OnPropertyChanged(nameof(ordersViewModel.Orders));
+                    }
+                    MessageBox.Show("Order saved successfully !", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                     MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -254,9 +254,20 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
+            this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
             return ExecuteNonQuery(query, parameters);
         }
 
+        private bool RemoveQuantityFromProduct(int productId, int quantity)
+        {
+            string removeQuantityFromProductsQuery = "UPDATE products SET quantity = quantity - @Quantity WHERE product_id = @ProductId";
+            List<SqlParameter> removeQuantityParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@Quantity", quantity),
+                new SqlParameter("@ProductId", productId)
+            };
+            return ExecuteNonQuery(removeQuantityFromProductsQuery, removeQuantityParameters);
+        }
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
         /// <summary>
@@ -319,13 +330,9 @@ namespace FT_Inventory.MVVM.Models
             foreach (OrderItem item in order.OrderItems)
             {
                 if (this.OrderItemExists(item))
-                {
                     this.UpdateOrderItem(item);
-                }
                 else
-                {
                     this.InsertOrderItem(item);
-                }
             }
             string query = "UPDATE orders SET customer_id = @CustomerId, created_at = @CreatedAt WHERE order_id = @OrderId";
             List<SqlParameter> parameters = new List<SqlParameter>
