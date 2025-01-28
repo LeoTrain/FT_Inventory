@@ -533,8 +533,9 @@ namespace FT_Inventory.MVVM.Models
             string query = "SELECT DISTINCT category FROM Products";
             DataTable dataTable = ExecuteQuery(query);
             List<string> categories = new List<string>();
-            if (!categories.Contains("All")) categories.Add("All");
             foreach (DataRow row in dataTable.Rows) categories.Add((string)row["category"]);
+            if (!categories.Contains("All")) categories.Add("All");
+            if (categories.Contains("")) categories.Remove("");
             return categories.ToArray();
         }
 

@@ -5,9 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
              xmlns:base="clr-namespace:FT_Inventory"
+             xmlns:converters="clr-namespace:FT_Inventory.Core.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="700"
              d:DataContext="{d:DesignInstance Type=base:MainWindow}">
+    <UserControl.Resources>
+        <converters:FlexibleDecimalConverter x:Key="FlexibleDecimalConverter"/>
+    </UserControl.Resources>
 
     <Grid Background="{StaticResource BlackBrush}">
         <Grid.RowDefinitions>
@@ -47,12 +51,12 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Price:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
-                        <TextBox Text="{Binding CurrentProduct.Price}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
+                        <TextBox Text="{Binding CurrentProduct.Price, Converter={StaticResource FlexibleDecimalConverter}}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
                         <TextBlock Text="{Binding CurrencySymbol}" Width="17" Style="{StaticResource LabelStyleWhite}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Discount:" Style="{StaticResource LabelStyleWhite}" Width="100"/>
-                        <TextBox Text="{Binding CurrentProduct.Discount}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
+                        <TextBox Text="{Binding CurrentProduct.Discount, Converter={StaticResource FlexibleDecimalConverter}}" Style="{StaticResource InputFieldsFocusable}" Width="75"/>
                         <TextBlock Text="%" Width="17" Style="{StaticResource LabelStyleWhite}"/>
                     </StackPanel>
                     <Border Height="1" Background="White" Margin="0,10,0,10"/>

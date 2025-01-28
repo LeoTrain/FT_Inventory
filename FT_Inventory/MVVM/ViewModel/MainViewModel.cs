@@ -163,14 +163,15 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is Product product)
                 {
-                    if (product.Id == 0) this.SaveNewProduct(product); else this.SaveExistingProduct(product);
+                    bool save_result = false;
+                    if (product.Id == 0) save_result = this.SaveNewProduct(product); else save_result = this.SaveExistingProduct(product);
                     try
                     {
                         var productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
                         if (productsViewModel != null) productsViewModel.LoadProducts();
                     }
                     catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
-                    this.GoBack();
+                    if (save_result) this.GoBack();
                 }
                 else MessageBox.Show("Error saving the product, please report the bug.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -261,19 +262,21 @@ namespace FT_Inventory.MVVM.ViewModel
         /// <param name="product"></param>
         /// <exception cref="SqlException">If an SQL error occurs</exception>
         /// <exception cref="Exception">If an error occurs</exception>
-        public void SaveExistingProduct(Product product)
+        public bool SaveExistingProduct(Product product)
         {
-            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-            if (!float.TryParse(product.Price.ToString(), out _)) { MessageBox.Show("Price must be a number", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-            if (!int.TryParse(product.StockQuantity.ToString(), out _)) { MessageBox.Show("Quantity must be a number", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-            if (product.StockQuantity < 0) { MessageBox.Show("Quantity cannot be less than 0", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (!float.TryParse(product.Price.ToString(), out _)) { MessageBox.Show("Price must be a number", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (product.Price < 0) { MessageBox.Show("Price cannot be less than 0", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (!int.TryParse(product.StockQuantity.ToString(), out _)) { MessageBox.Show("Quantity must be a number", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (product.StockQuantity < 0) { MessageBox.Show("Quantity cannot be less than 0", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
             try
             {
-                if (this._dbManager.UpdateProduct(product)) MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                else MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (this._dbManager.UpdateProduct(product)) { MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information); return true; }
+                else { MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
             }
             catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
 
         /// <summary>
@@ -298,15 +301,19 @@ namespace FT_Inventory.MVVM.ViewModel
         /// </summary>
         /// <param name="product"></param>
         /// <exception cref="Exception">If an error occurs</exception>
-        public void SaveNewProduct(Product product)
+        public bool SaveNewProduct(Product product)
         {
-            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (string.IsNullOrEmpty(product.StockKeepingUnit)) { MessageBox.Show("StockKeepingUnit cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+
             try
             {
                 this._dbManager.InsertProduct(product);
                 MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                return true;
             }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
 
         /// <summary>

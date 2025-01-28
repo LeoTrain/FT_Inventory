@@ -15,6 +15,7 @@ using System.Printing;
 using System.Windows.Navigation;
 using FT_Inventory.Core.Commands;
 using FT_Inventory.Core.Exceptions;
+using Microsoft.Data.SqlClient;
 
 namespace FT_Inventory.MVVM.ViewModel
 {
@@ -28,28 +29,18 @@ namespace FT_Inventory.MVVM.ViewModel
         public ObservableCollection<Product> Products { get; set; }
         public RelayCommand DeleteProductCommand { get; set; }
 
+        /// <summary>
+        /// The search text entered by the user to filter the products data grid.
+        /// </summary>
         public string SearchText
         {
-            get { return _searchText; }
-            set
-            {
-                if (_searchText != value)
-                {
-                    _searchText = value;
-                    OnPropertyChanged(nameof(SearchText));
-                    this.UpdateProductsBySearchText();
-                }
-            }
+            get => _searchText;
+            set { if (_searchText != value) if (value.Count() < 50) { _searchText = value; OnPropertyChanged(nameof(SearchText)); this.UpdateProductsBySearchText(); } }
         }
         public string SelectedCategory
         {
-            get { return _selectedCategory; }
-            set
-            {
-                _selectedCategory = value;
-                OnPropertyChanged(nameof(SelectedCategory));
-                this.UpdateProductsByCategory();
-            }
+            get => _selectedCategory;
+            set {  _selectedCategory = value; OnPropertyChanged(nameof(SelectedCategory)); this.UpdateProductsByCategory(); }
         }
 
         public ProductsViewModel(DatabaseManager dbManager)
@@ -60,19 +51,16 @@ namespace FT_Inventory.MVVM.ViewModel
             DeleteProductCommand = new RelayCommand(o =>
             {
                 if (SelectedProduct != null)
-                {
-                    MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this product?",
-                                                              "Delete Confirmation",
-                                                              MessageBoxButton.YesNo,
-                                                              MessageBoxImage.Warning);
-                    if (result == MessageBoxResult.Yes)
+                { 
+                    MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this product?", "Delete Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                    try
                     {
-                        _dbManager.DeleteProduct(SelectedProduct);
-                        LoadProducts();
+                        if (result == MessageBoxResult.Yes) { _dbManager.DeleteProduct(SelectedProduct); this.LoadProducts(); }
                     }
+                    catch (SqlException) { MessageBox.Show("Unable to delete. The product is binded to one ore more order_items.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
-                else
-                    MessageBox.Show("Please select a product to delete", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show("Please select a product to delete", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
         }
 
@@ -84,7 +72,7 @@ namespace FT_Inventory.MVVM.ViewModel
                 {
                     List<Product> productsFromDb = this._dbManager.GetAllProducts();
                     this.Categories = this._dbManager.GetAllProductCategories();
-                    this.SelectedCategory = Categories[0];
+                    this.SelectedCategory = "All";
                     this.SelectedProduct = productsFromDb[0];
                     this.Products = new ObservableCollection<Product>(productsFromDb);
                 }
