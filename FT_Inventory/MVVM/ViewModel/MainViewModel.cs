@@ -57,7 +57,7 @@ namespace FT_Inventory.MVVM.ViewModel
         public MainViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
-            _currentView = new HomeViewModel();
+            CurrentView = new HomeViewModel();
             SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, o as Product, false)));
             SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
             SwitchToOrderDetailsView = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, o as Order, false)));

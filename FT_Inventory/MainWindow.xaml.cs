@@ -24,15 +24,6 @@ namespace FT_Inventory
         public MainWindow()
         {
             InitializeComponent();
-            try
-            {
-                this.dbManager = new DatabaseManager("Server=B101-03;Database=InventoryDb;Trusted_Connection=True;TrustServerCertificate=True;");
-                DataContext = new MainViewModel(this.dbManager);
-            }
-            catch (DbConnectionException e)
-            {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)

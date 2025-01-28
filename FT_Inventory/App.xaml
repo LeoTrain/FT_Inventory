@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:viewModel="clr-namespace:FT_Inventory.MVVM.ViewModel"
              xmlns:view="clr-namespace:FT_Inventory.MVVM.View"
-             xmlns:local="clr-namespace:FT_Inventory"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:FT_Inventory" xmlns:local1="clr-namespace:FT_Inventory.MVVM.Models">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

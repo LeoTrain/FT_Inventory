@@ -15,6 +15,7 @@
 
     <Border Background="{StaticResource BlackBrush}"
             CornerRadius="10">
+
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>

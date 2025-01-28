@@ -12,11 +12,20 @@ namespace FT_Inventory
     /// </summary>
     public partial class App : Application
     {
+        public DatabaseManager? DbManager { get; private set; }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Warning | System.Diagnostics.SourceLevels.Error;
+            DbManager = new DatabaseManager("Server=DESKTOP-U0S8Q19\\SQLEXPRESS;Database=InventoryDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            MainViewModel mainViewModel = new MainViewModel(DbManager);
+            MainWindow mainWindow = new MainWindow
+            {
+                DataContext = mainViewModel
+            };
+            mainWindow.Show();
         }
     }
+
 
 }
