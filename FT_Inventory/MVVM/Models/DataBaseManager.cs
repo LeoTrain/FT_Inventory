@@ -425,7 +425,7 @@ namespace FT_Inventory.MVVM.Models
         /// <summary>
         /// This method retrieves all <see cref="Customer"/> from the database.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of all customers in the database.</returns>
         public List<Customer> GetAllCustomers()
         {
             string query = "SELECT customer_id, first_name, last_name, email, phone, address, city, state, postal_code, country, created_at, updated_at, image_url FROM Customers";
