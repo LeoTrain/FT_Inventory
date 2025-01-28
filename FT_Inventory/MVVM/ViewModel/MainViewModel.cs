@@ -21,6 +21,9 @@ namespace FT_Inventory.MVVM.ViewModel
         private readonly Stack<object> _viewHistory = new Stack<object>();
         private DatabaseManager _dbManager;
         private object _currentView;
+        /// <summary>
+        /// The current view that is displayed in the main window
+        /// </summary>
         public object CurrentView
         {
             get => _currentView;
@@ -30,35 +33,110 @@ namespace FT_Inventory.MVVM.ViewModel
                 OnPropertyChanged(nameof(CurrentView));
             }
         }
-
-        public RelayCommand ExitButtonCommand { get; }
-        public RelayCommand SwitchToHomeView { get; }
-        public RelayCommand SwitchToProductsView { get; }
-        public RelayCommand SwitchToCustomerView { get; }
-        public RelayCommand SwitchToOrderView { get; }
-        public RelayCommand SwitchToOrderDetailsView { get; }
-        public RelayCommand SwitchToProductDetailsView { get; }
-        public RelayCommand SwitchToCustomerDetailsView { get; }
-        public RelayCommand GoBackCommand { get; }
-        public RelayCommand AddNewProductCommand { get; }
-        public RelayCommand SaveProductCommand { get; }
-        public RelayCommand AddNewCustomerCommand { get; }
-        public RelayCommand SaveCustomerCommand { get; }
-        public RelayCommand SwitchToOrderItemView { get; }
-        public RelayCommand AddNewOrderCommand { get; }
-        public RelayCommand SaveOrderCommand { get; }
-        public RelayCommand AddNewOrderItem { get; }
-        public RelayCommand SaveOrderItemCommand { get; }
+        /// <summary>
+        /// Boolean propertie to check if the home view is selected
+        /// </summary>
         public bool HomeViewSelected { get; set; }
+        /// <summary>
+        /// Boolean propertie to check if the products view is selected
+        /// </summary>
         public bool ProductsViewSelected { get; set;  }
+        /// <summary>
+        /// Boolean propertie to check if the customers view is selected
+        /// </summary>
         public bool CustomersViewSelected { get; set; }
+        /// <summary>
+        /// Boolean propertie to check if the orders view is selected
+        /// </summary>
         public bool OrdersViewSelected { get; set; }
 
+        /// <summary>
+        /// Command to exit the application
+        /// </summary>
+        public RelayCommand ExitButtonCommand { get; }
+        /// <summary>
+        /// Command to switch to the home view
+        /// </summary>
+        public RelayCommand SwitchToHomeView { get; }
+        /// <summary>
+        /// Command to switch to the product details view
+        /// </summary>
+        public RelayCommand SwitchToProductsView { get; }
+        /// <summary>
+        /// Command to switch to the customer details view
+        /// </summary>
+        public RelayCommand SwitchToCustomerView { get; }
+        /// <summary>
+        /// Command to switch to the order details view
+        /// </summary>
+        public RelayCommand SwitchToOrderView { get; }
+        /// <summary>
+        /// Command to switch to the product details view
+        /// </summary>
+        public RelayCommand SwitchToOrderDetailsView { get; }
+        /// <summary>
+        /// Command to switch to the product details view
+        /// </summary>
+        public RelayCommand SwitchToProductDetailsView { get; }
+        /// <summary>
+        /// Command to switch to the customer details view
+        /// </summary>
+        public RelayCommand SwitchToCustomerDetailsView { get; }
+        /// <summary>
+        /// Command to switch to the order details view
+        /// </summary>
+        public RelayCommand GoBackCommand { get; }
+        /// <summary>
+        /// Command to switch to the product details view
+        /// </summary>
+        public RelayCommand AddNewProductCommand { get; }
+        /// <summary>
+        /// Command to save a already existing or new product
+        /// </summary>
+        /// <exception cref="Exception">If an error occurs</exception>
+        public RelayCommand SaveProductCommand { get; }
+        /// <summary>
+        /// Command to switch to the customer details view
+        /// </summary>
+        public RelayCommand AddNewCustomerCommand { get; }
+        /// <summary>
+        /// Command to save an already existing or new customer
+        /// </summary>
+        public RelayCommand SaveCustomerCommand { get; }
+        /// <summary>
+        /// Command to switch to the order item view
+        /// </summary>
+        public RelayCommand SwitchToOrderItemView { get; }
+        /// <summary>
+        /// Command to switch to the order details view
+        /// </summary>
+        public RelayCommand AddNewOrderCommand { get; }
+        /// <summary>
+        /// Command to save an already existing or new order
+        /// </summary>
+        /// <exception cref="Exception">If an error occurs</exception>
+        public RelayCommand SaveOrderCommand { get; }
+        /// <summary>
+        /// Command to add a new order item
+        /// </summary>
+        public RelayCommand AddNewOrderItem { get; }
+        /// <summary>
+        /// Command to save an already existing or new order item
+        /// </summary>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
+        public RelayCommand SaveOrderItemCommand { get; }
+
+        /// <summary>
+        /// Constructor for the MainViewModel. Containing most of the Commands for the project. Uses a <see cref="DatabaseManager"/> to retrieve and save data from/to the database.
+        /// </summary>
+        /// <param name="dbManager"></param>
         public MainViewModel(DatabaseManager dbManager)
         {
             _dbManager = dbManager;
             CurrentView = new HomeViewModel();
             this.SwitchSelected();
+            GoBackCommand = new RelayCommand(o => this.GoBack());
             ExitButtonCommand = new RelayCommand(o => { MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the Application?", "Confirmation", MessageBoxButton.YesNo); if (result == MessageBoxResult.Yes) System.Windows.Application.Current.Shutdown(); });
             SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, o as Product, false)));
             SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
@@ -68,7 +146,6 @@ namespace FT_Inventory.MVVM.ViewModel
             SwitchToProductsView = new RelayCommand(o => { this.NavigateTo(new ProductsViewModel(this._dbManager)); this.SwitchSelected(); });
             SwitchToCustomerView = new RelayCommand(o => { this.NavigateTo(new CustomersViewModel(this._dbManager)); this.SwitchSelected(); });
             SwitchToOrderView = new RelayCommand(o => { this.NavigateTo(new OrdersViewModel(this._dbManager)); this.SwitchSelected(); });
-            GoBackCommand = new RelayCommand(o => this.GoBack());
             AddNewProductCommand = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, new Product(), true)));
             AddNewCustomerCommand = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, new Customer(), true)));
             AddNewOrderCommand = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, new Order(this._dbManager.GetLastOrderId()+1), true)));
@@ -77,8 +154,7 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is Product product)
                 {
-                    if (product.Id == 0) this.SaveNewProduct(product);
-                    else this.SaveExistingProduct(product);
+                    if (product.Id == 0) this.SaveNewProduct(product); else this.SaveExistingProduct(product);
                     try
                     {
                         var productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
@@ -139,6 +215,11 @@ namespace FT_Inventory.MVVM.ViewModel
             });
         }
 
+        /// <summary>
+        /// Method to navigate to a new view. It pushes the current view to a <see cref="Stack{T}"/> to be able to go back.
+        /// </summary>
+        /// <param name="newView"></param>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void NavigateTo(object newView)
         {
             try
@@ -150,6 +231,10 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to go back to the previous view. Careful it uses a <see cref="Stack{T}"/>, so it pops the current view.
+        /// </summary>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void GoBack()
         {
             try
@@ -160,6 +245,12 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save an existing product into the database.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveExistingProduct(Product product)
         {
             if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
@@ -175,6 +266,12 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save an existing customer into the database.
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveExistingCustomer(Customer customer)
         {
             try
@@ -186,6 +283,11 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save a new product into the database.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveNewProduct(Product product)
         {
             if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
@@ -197,6 +299,11 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save a new customer into the database.
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
         public void SaveNewCustomer(Customer customer)
         {
             if (string.IsNullOrEmpty(customer.FirstName)) { MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
@@ -206,30 +313,44 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 this._dbManager.InsertCustomer(customer);
                 MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                CustomersViewModel cvm = this._viewHistory.Peek() as CustomersViewModel;
-                cvm.AddCustomer(customer);
+                CustomersViewModel? cvm = this._viewHistory.Peek() as CustomersViewModel;
+                cvm?.AddCustomer(customer);
                 this.GoBack();
 
             }
             catch (SqlException exception) { if (exception.Number == 2627) MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
+        /// <summary>
+        /// Method to save a new order into the database.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveNewOrder(Order order)
         {
             try
             {
-                OrderDetailsViewModel odvm = CurrentView as OrderDetailsViewModel;
-                odvm.LoadCustomer();
-                odvm.CurrentOrder.CalculateTotalPrice();
-                if (this._dbManager.InsertOrder(order))
-                    foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem);
-                else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-                MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                OrderDetailsViewModel? odvm = CurrentView as OrderDetailsViewModel;
+                odvm?.LoadCustomer();
+                odvm?.CurrentOrder.CalculateTotalPrice();
+                if (odvm != null)
+                {
+                    if (this._dbManager.InsertOrder(order)) foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem);
+                    else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+                    MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (SqlException exception) { if (exception.Number == 547) MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save an existing order into the database.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveExistingOrder(Order order)
         {
             try
@@ -241,6 +362,12 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save a new order item into the database.
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>
         public void SaveNewOrderItem(OrderItem orderItem)
         {
             try
@@ -257,20 +384,28 @@ namespace FT_Inventory.MVVM.ViewModel
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
+        /// <summary>
+        /// Method to save an existing order item into the database.
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <exception cref="SqlException">If an SQL error occurs</exception>
+        /// <exception cref="Exception">If an error occurs</exception>  
         public void SaveExistingOrderItem(OrderItem orderItem)
         {
             if (_dbManager.UpdateOrderItem(orderItem))
             {
                 try
                 {
-                    OrderDetailsViewModel odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
-                    odvm.CurrentOrder.UpdateOrderItem(orderItem);
-                    odvm.CurrentOrder.CalculateTotalPrice();
-                    OnPropertyChanged(nameof(odvm.CurrentOrder));
-                    MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.GoBack();
-                    OrdersViewModel ovm = this._viewHistory.Peek() as OrdersViewModel;
-                    ovm.SelectedOrder = odvm.CurrentOrder;
+                    OrderDetailsViewModel? odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
+                    odvm?.CurrentOrder.UpdateOrderItem(orderItem);
+                    odvm?.CurrentOrder.CalculateTotalPrice();
+                    if (odvm != null) { 
+                        OnPropertyChanged(nameof(odvm.CurrentOrder));
+                        MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        this.GoBack();
+                        OrdersViewModel? ovm = this._viewHistory.Peek() as OrdersViewModel;
+                        if (ovm != null) ovm.SelectedOrder = odvm.CurrentOrder;
+                    }
                 }
                 catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -278,6 +413,9 @@ namespace FT_Inventory.MVVM.ViewModel
             else MessageBox.Show("Error saving the order item. Please save the Order if you created a new OrderItem", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        /// <summary>
+        /// Method to switch the selected view and call the OnPropertyChanged method for the properties.
+        /// </summary>
         private void SwitchSelected()
         {
             HomeViewSelected = CurrentView is HomeViewModel;

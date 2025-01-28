@@ -333,7 +333,7 @@ namespace FT_Inventory.MVVM.Models
         public bool DeleteCustomer(int customerId)
         {
             string query = "DELETE FROM Customers WHERE customer_id = @CustomerId";
-            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@CustomerId", customerId) }
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@CustomerId", customerId) };
             return ExecuteNonQuery(query, parameters);
         }
 
