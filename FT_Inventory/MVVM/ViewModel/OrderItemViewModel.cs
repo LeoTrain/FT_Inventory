@@ -9,24 +9,43 @@ using FT_Inventory.MVVM.Models;
 
 namespace FT_Inventory.MVVM.ViewModel
 {
+    /// <summary>
+    /// The ViewModel for the OrderItemView. This ViewModel is used to display and edit an order item. Based on the <see cref="ViewModelBase"/>.
+    /// </summary>
     internal class OrderItemViewModel : ViewModelBase
     {
+        /// <summary>
+        /// The database manager for the application.
+        /// </summary>
         private DatabaseManager dbManager;
+        /// <summary>
+        /// The current order item being displayed.
+        /// </summary>
         private OrderItem _currentOrderItem;
+        /// <summary>
+        /// The selected product for the order item.
+        /// </summary>
         private Product _selectedProduct;
+        /// <summary>
+        /// The current product selected.
+        /// </summary>
+        private Product _currentProduct;
+        /// <summary>
+        /// The command to increment the quantity of the <see cref="SelectedProduct"/>.
+        /// </summary>
         public RelayCommand IncrementQuantityCommand { get; set; }
+        /// <summary>
+        /// The command to decrement the quantity of the <see cref="SelectedProduct"/>.
+        /// </summary>
         public RelayCommand DecrementQuantityCommand { get; set; }
-        public OrderItem CurrentOrderItem
-        {
-            get { return _currentOrderItem; }
-            set
-            {
-                _currentOrderItem = value;
-                OnPropertyChanged(nameof(CurrentOrderItem));
-            }
-        }
-
-        public Product CurrentProduct { get; private set; }
+        /// <summary>
+        /// The current order item being displayed. After the order item is set, the <see cref="OnPropertyChanged"/> event is raised on it.
+        /// </summary>
+        public OrderItem CurrentOrderItem { get => _currentOrderItem; set { _currentOrderItem = value; OnPropertyChanged(nameof(CurrentOrderItem)); }}
+        /// <summary>
+        /// The selected product for the order item. After the product is set, the <see cref="OnPropertyChanged"/> event is raised on it.
+        /// </summary>
+        public Product CurrentProduct { get => _selectedProduct; set { _selectedProduct = value; OnPropertyChanged(SelectedProduct); }}
         public string SelectedProduct
         {
             get { return _selectedProduct.Name; }

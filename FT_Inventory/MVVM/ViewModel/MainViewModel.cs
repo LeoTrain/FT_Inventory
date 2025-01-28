@@ -18,8 +18,17 @@ namespace FT_Inventory.MVVM.ViewModel
 {
     internal class MainViewModel : ViewModelBase
     {
+        /// <summary>
+        /// A stack to store the view history
+        /// </summary>
         private readonly Stack<object> _viewHistory = new Stack<object>();
+        /// <summary>
+        /// The database manager to interact with the database
+        /// </summary>
         private DatabaseManager _dbManager;
+        /// <summary>
+        /// The current view that is displayed in the main window
+        /// </summary>
         private object _currentView;
         /// <summary>
         /// The current view that is displayed in the main window
@@ -205,7 +214,7 @@ namespace FT_Inventory.MVVM.ViewModel
                             oivm.LoadProduct();
                             if (oivm.CurrentOrderItem.OrderItemId == 0) this.SaveNewOrderItem(orderItem);
                             else this.SaveExistingOrderItem(oivm.CurrentOrderItem);
-                            OnPropertyChanged(nameof(oivm.CurrentProduct));
+                            //OnPropertyChanged(nameof(oivm.CurrentProduct));
                         }
                     }
                     catch (SqlException ex) { MessageBox.Show($"Error saving the order item: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -332,8 +341,8 @@ namespace FT_Inventory.MVVM.ViewModel
             try
             {
                 OrderDetailsViewModel? odvm = CurrentView as OrderDetailsViewModel;
-                odvm?.LoadCustomer();
-                odvm?.CurrentOrder.CalculateTotalPrice();
+                //odvm?.LoadCustomer();
+                //odvm?.CurrentOrder.CalculateTotalPrice();
                 if (odvm != null)
                 {
                     if (this._dbManager.InsertOrder(order)) foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem);
@@ -341,7 +350,11 @@ namespace FT_Inventory.MVVM.ViewModel
                     MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
-            catch (SqlException exception) { if (exception.Number == 547) MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (SqlException exception) 
+            { 
+                if (exception.Number == 547) MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                else MessageBox.Show($"Unhandled SQL Error: {exception.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 

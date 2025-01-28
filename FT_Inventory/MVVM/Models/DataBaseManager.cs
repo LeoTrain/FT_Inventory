@@ -211,7 +211,7 @@ namespace FT_Inventory.MVVM.Models
         /// <returns></returns>
         private bool RemoveQuantityFromProduct(int productId, int quantity)
         {
-            string removeQuantityFromProductsQuery = "UPDATE products SET quantity = quantity - @Quantity WHERE product_id = @ProductId";
+            string removeQuantityFromProductsQuery = "UPDATE products SET stock_quantity = stock_quantity - @Quantity WHERE product_id = @ProductId";
             List<SqlParameter> removeQuantityParameters = new List<SqlParameter> { new SqlParameter("@Quantity", quantity), new SqlParameter("@ProductId", productId) };
             return ExecuteNonQuery(removeQuantityFromProductsQuery, removeQuantityParameters);
         }
@@ -294,12 +294,14 @@ namespace FT_Inventory.MVVM.Models
 
         /// <summary>
         /// This method updates an <see cref="OrderItem"/> in the database.
+        /// It also removes the quantity from the <see cref="Product"/> in the database.
         /// </summary>
         /// <param name="orderItem"></param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> that defines if the order item has been updated.</returns>
         public bool UpdateOrderItem(OrderItem orderItem)
         {
-            string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
+            if (this.OrderItemExists(orderItem) == false) return false;
+            string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, stock_quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameter = new List<SqlParameter>
             {
                 new SqlParameter("@OrderItemId", orderItem.OrderItemId),
@@ -308,6 +310,7 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
+            this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
             return ExecuteNonQuery(query, parameter);
         }
 
@@ -317,7 +320,7 @@ namespace FT_Inventory.MVVM.Models
         /// This method deletes a <see cref="Product"/> from the database.
         /// </summary>
         /// <param name="product"></param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> that ddefines if the Product has been deleted</returns>
         public bool DeleteProduct(Product product)
         {
             string query = "DELETE FROM Products WHERE product_id = @ProductId";
