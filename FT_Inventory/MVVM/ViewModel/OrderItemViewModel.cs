@@ -56,8 +56,10 @@ namespace FT_Inventory.MVVM.ViewModel
                     {
                         _selectedProduct = product;
                         CurrentProduct = product;
+                        CurrentOrderItem.Quantity = 0;
                         OnPropertyChanged(nameof(SelectedProduct));
                         OnPropertyChanged(nameof(CurrentProduct));
+                        OnPropertyChanged(nameof(CurrentOrderItem));
                         this.LoadProduct();
                     }
             }
@@ -88,9 +90,12 @@ namespace FT_Inventory.MVVM.ViewModel
 
         private void IncrementQuantity(object obj)
         {
-            CurrentOrderItem.Quantity++;
-            CurrentOrderItem.TotalPrice = CurrentOrderItem.Product.Price * CurrentOrderItem.Quantity;
-            OnPropertyChanged(nameof(CurrentOrderItem));
+            if (_selectedProduct.StockQuantity > CurrentOrderItem.Quantity + 1)
+            {
+                CurrentOrderItem.Quantity++;
+                CurrentOrderItem.CalculateTotalPrice();
+                OnPropertyChanged(nameof(CurrentOrderItem));
+            }
         }
 
         private void DecrementQuantity(object obj)

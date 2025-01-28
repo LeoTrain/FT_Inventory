@@ -189,7 +189,8 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is Order order)
                 {
-                    if (this._dbManager.OrderExists(order.OrderId)) this.SaveExistingOrder(order);
+                    bool order_saved = false;
+                    if (this._dbManager.OrderExists(order.OrderId)) order_saved = this.SaveExistingOrder(order);
                     else this.SaveNewOrder(order);
                     this.GoBack();
                     try 
@@ -336,7 +337,7 @@ namespace FT_Inventory.MVVM.ViewModel
         /// <param name="order"></param>
         /// <exception cref="SqlException">If an SQL error occurs</exception>
         /// <exception cref="Exception">If an error occurs</exception>
-        public void SaveNewOrder(Order order)
+        public bool SaveNewOrder(Order order)
         {
             try
             {
@@ -345,9 +346,10 @@ namespace FT_Inventory.MVVM.ViewModel
                 //odvm?.CurrentOrder.CalculateTotalPrice();
                 if (odvm != null)
                 {
-                    if (this._dbManager.InsertOrder(order)) foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem);
-                    else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-                    MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    bool result = this._dbManager.InsertOrder(order);
+                    if (result) { foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem); MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information); }
+                    else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                    return result;
                 }
             }
             catch (SqlException exception) 
@@ -356,6 +358,7 @@ namespace FT_Inventory.MVVM.ViewModel
                 else MessageBox.Show($"Unhandled SQL Error: {exception.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
 
         /// <summary>
@@ -364,15 +367,19 @@ namespace FT_Inventory.MVVM.ViewModel
         /// <param name="order"></param>
         /// <exception cref="SqlException">If an SQL error occurs</exception>
         /// <exception cref="Exception">If an error occurs</exception>
-        public void SaveExistingOrder(Order order)
+        public bool SaveExistingOrder(Order order)
         {
+            bool result = false;
             try
             {
-                if (this._dbManager.UpdateOrder(order)) MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                result = this._dbManager.UpdateOrder(order); 
+                if (result) MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 else MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return result;
             }
             catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
 
         /// <summary>

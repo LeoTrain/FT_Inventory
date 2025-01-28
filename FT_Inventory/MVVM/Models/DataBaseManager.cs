@@ -188,9 +188,10 @@ namespace FT_Inventory.MVVM.Models
         /// This method inserts an <see cref="OrderItem"/> into the database.
         /// </summary>
         /// <param name="orderItem"></param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> that defines if the product has been inserted.</returns>
         public bool InsertOrderItem(OrderItem orderItem)
         {
+            if (orderItem.Product.StockQuantity < orderItem.Quantity) return false;
             string query = "INSERT INTO order_items (order_id, product_id, quantity, total_price) VALUES (@OrderId, @ProductId, @Quantity, @TotalPrice)";
             List<SqlParameter> parameters = new List<SqlParameter>
             {
@@ -199,8 +200,9 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
-            this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
-            return ExecuteNonQuery(query, parameters);
+            bool result = ExecuteNonQuery(query, parameters);
+            if (result) this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
+            return result;
         }
 
         /// <summary>
@@ -208,7 +210,7 @@ namespace FT_Inventory.MVVM.Models
         /// </summary>
         /// <param name="productId"></param>
         /// <param name="quantity"></param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> that defines if the quantity has been removed. If not there is a problem...</returns>
         private bool RemoveQuantityFromProduct(int productId, int quantity)
         {
             string removeQuantityFromProductsQuery = "UPDATE products SET stock_quantity = stock_quantity - @Quantity WHERE product_id = @ProductId";
@@ -277,10 +279,8 @@ namespace FT_Inventory.MVVM.Models
         {
             foreach (OrderItem item in order.OrderItems)
             {
-                if (this.OrderItemExists(item))
-                    this.UpdateOrderItem(item);
-                else
-                    this.InsertOrderItem(item);
+                if (this.OrderItemExists(item)) { if (!this.UpdateOrderItem(item)) return false; }
+                else { if (!this.InsertOrderItem(item)) return false; }
             }
             string query = "UPDATE orders SET customer_id = @CustomerId, created_at = @CreatedAt WHERE order_id = @OrderId";
             List<SqlParameter> parameters = new List<SqlParameter>
@@ -300,7 +300,8 @@ namespace FT_Inventory.MVVM.Models
         /// <returns>A <see cref="bool"/> that defines if the order item has been updated.</returns>
         public bool UpdateOrderItem(OrderItem orderItem)
         {
-            if (this.OrderItemExists(orderItem) == false) return false;
+            if (!this.OrderItemExists(orderItem)) return false;
+            if (orderItem.Product.StockQuantity < orderItem.Quantity) return false;
             string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, stock_quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameter = new List<SqlParameter>
             {
@@ -310,8 +311,9 @@ namespace FT_Inventory.MVVM.Models
                 new SqlParameter("@Quantity", orderItem.Quantity),
                 new SqlParameter("@TotalPrice", orderItem.TotalPrice)
             };
-            this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
-            return ExecuteNonQuery(query, parameter);
+            bool result = ExecuteNonQuery(query, parameter);
+            if (result) this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
+            return result;
         }
 
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -459,10 +461,42 @@ namespace FT_Inventory.MVVM.Models
         /* -------------------------------------------------------------------------------------------------------------------------------------------------- */
 
         /// <summary>
-        /// This method retrieves all <see cref="Product"/>'s by its <see cref="Product.Category"/>.
+        /// This method retrieves a <see cref="Product"/> by its <see cref="Product.Id"/> from the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private Product GetProductById(int id)
+        {
+            string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE product_id = @ProductId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProductId", id) };
+            DataTable dataTable = ExecuteQuery(query, parameters);
+            Product product = new Product();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                product = new Product
+                (
+                    (int)row["product_id"],
+                    (string)row["stock_keeping_unit"],
+                    (string)row["name"],
+                    (string)row["description"],
+                    (decimal)row["price"],
+                    (int)row["stock_quantity"],
+                    (string)row["category"],
+                    (string)row["image_url"],
+                    (decimal)row["discount"],
+                    (bool)row["is_active"],
+                    (DateTime)row["created_at"],
+                    (DateTime)row["updated_at"]
+                );
+            }
+            return product;
+        }
+
+        /// <summary>
+        /// This method retrieves all <see cref="Product"/>'s by its <see cref="Product.Category"/> from the database.
         /// </summary>
         /// <param name="category"></param>
-        /// <returns></returns>
+        /// <returns>Returns all <see cref="List{Product}"/> from a category from the database.</returns>
         public List<Product> GetProductsByCategory(string category)
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE category = @Category";
@@ -578,6 +612,5 @@ namespace FT_Inventory.MVVM.Models
             int count = (int)ExecuteScalar(query, parameters);
             return count > 0;
         }
-
     }
 }
