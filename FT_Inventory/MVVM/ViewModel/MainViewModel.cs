@@ -49,7 +49,6 @@ namespace FT_Inventory.MVVM.ViewModel
         public RelayCommand SaveOrderCommand { get; }
         public RelayCommand AddNewOrderItem { get; }
         public RelayCommand SaveOrderItemCommand { get; }
-
         public bool HomeViewSelected { get; set; }
         public bool ProductsViewSelected { get; set;  }
         public bool CustomersViewSelected { get; set; }
@@ -59,6 +58,7 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             _dbManager = dbManager;
             CurrentView = new HomeViewModel();
+            this.SwitchSelected();
             ExitButtonCommand = new RelayCommand(o => { MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the Application?", "Confirmation", MessageBoxButton.YesNo); if (result == MessageBoxResult.Yes) System.Windows.Application.Current.Shutdown(); });
             SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, o as Product, false)));
             SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
@@ -77,94 +77,74 @@ namespace FT_Inventory.MVVM.ViewModel
             {
                 if (o is Product product)
                 {
-                    if (product.Id == 0)
-                        this.SaveNewProduct(product);
-                    else
-                        this.SaveExistingProduct(product);
+                    if (product.Id == 0) this.SaveNewProduct(product);
+                    else this.SaveExistingProduct(product);
                     try
                     {
                         ProductsViewModel productsViewModel = this._viewHistory.Peek() as ProductsViewModel;
-                        if (productsViewModel != null)
-                            productsViewModel.LoadProducts();
+                        if (productsViewModel != null) productsViewModel.LoadProducts();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                     this.GoBack();
-                    
                 }
-                else
-                    MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show("Error saving the product, please report the bug.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             });
             SaveCustomerCommand = new RelayCommand(o =>
             {
                 if (o is Customer customer)
                 {
-                    if (customer.Id == 0)
-                        this.SaveNewCustomer(customer);
-                    else
-                        this.SaveExistingCustomer(customer);
-
+                    if (customer.Id == 0) this.SaveNewCustomer(customer);
+                    else this.SaveExistingCustomer(customer);
                     this.GoBack();
                 }
-                else
-                    MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
             SaveOrderCommand = new RelayCommand(o =>
             {
                 if (o is Order order)
                 {
-                    if (this._dbManager.OrderExists(order.OrderId))
-                        this.SaveExistingOrder(order);
-                    else
-                        this.SaveNewOrder(order);
+                    if (this._dbManager.OrderExists(order.OrderId)) this.SaveExistingOrder(order);
+                    else this.SaveNewOrder(order);
                     this.GoBack();
-                    var ordersViewModel = this.CurrentView as OrdersViewModel;
-                    if (ordersViewModel != null)
-                    {
-                        ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders());
-                        OnPropertyChanged(nameof(ordersViewModel.Orders));
-                    }
-                    MessageBox.Show("Order saved successfully !", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    try 
+                    { 
+                        var ordersViewModel = this.CurrentView as OrdersViewModel;
+                        if (ordersViewModel != null) { ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders()); OnPropertyChanged(nameof(ordersViewModel.Orders)); }
+                        MessageBox.Show("Order saved successfully !", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    } 
+                    catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
-                else
-                    MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
             SaveOrderItemCommand = new RelayCommand(o =>
             {
                 if (o is OrderItem orderItem)
                 {
-                    OrderItemViewModel currentView = CurrentView as OrderItemViewModel;
-                    currentView.LoadProduct();
-                    if (currentView.CurrentOrderItem.OrderItemId == 0)
-                        this.SaveNewOrderItem(orderItem);
-                    else
-                        this.SaveExistingOrderItem(currentView.CurrentOrderItem);
-                    OnPropertyChanged(nameof(currentView.CurrentProduct));
+                    try
+                    {
+                        OrderItemViewModel oivm = CurrentView as OrderItemViewModel;
+                        oivm.LoadProduct();
+                        if (oivm.CurrentOrderItem.OrderItemId == 0) this.SaveNewOrderItem(orderItem);
+                        else this.SaveExistingOrderItem(oivm.CurrentOrderItem);
+                        OnPropertyChanged(nameof(oivm.CurrentProduct));
+                    }
+                    catch (SqlException ex) { MessageBox.Show($"Error saving the order item: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                    catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
-                else
-                    MessageBox.Show("Error saving the order item", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show("Unhandeld Error, please report the bug.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
-            HomeViewSelected = true;
-            ProductsViewSelected = false;
-            CustomersViewSelected = false;
-            OrdersViewSelected = false;
         }
 
         public void NavigateTo(object newView)
         {
             try
             {
-                if (this.CurrentView != null)
-                    this._viewHistory.Push(CurrentView);
+                if (this.CurrentView != null) this._viewHistory.Push(CurrentView);
                 this.CurrentView = newView;
+                this.SwitchSelected();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void GoBack()
@@ -172,101 +152,51 @@ namespace FT_Inventory.MVVM.ViewModel
             try
             {
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to go back?", "Cancel Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                    if (this._viewHistory.Count > 0)
-                        this.CurrentView = this._viewHistory.Pop();
+                if (result == MessageBoxResult.Yes) if (this._viewHistory.Count > 0) this.CurrentView = this._viewHistory.Pop();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Navigation Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveExistingProduct(Product product)
         {
-            if (string.IsNullOrEmpty(product.Name))
-            {
-                MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
+            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (!float.TryParse(product.Price.ToString(), out _)) { MessageBox.Show("Price must be a number", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
             try
             {
-                if (this._dbManager.UpdateProduct(product))
-                {
-                    MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                    MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (this._dbManager.UpdateProduct(product)) MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else MessageBox.Show("Error saving the product", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-            }
+            catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveExistingCustomer(Customer customer)
         {
             try
             {
-                if (_dbManager.UpdateCustomer(customer))
-                {
-                    MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                    MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (_dbManager.UpdateCustomer(customer)) MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch (SqlException exception)
-            {
-                if (exception.Number == 2627)
-                    MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (SqlException exception) { if (exception.Number == 2627) MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveNewProduct(Product product)
         {
-            if (string.IsNullOrEmpty(product.Name))
-            {
-                MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            if (string.IsNullOrEmpty(product.Name)) { MessageBox.Show("Product name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
             try
             {
                 this._dbManager.InsertProduct(product);
                 MessageBox.Show("Product saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveNewCustomer(Customer customer)
         {
-            if (string.IsNullOrEmpty(customer.FirstName))
-            {
-                MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (string.IsNullOrEmpty(customer.LastName))
-            {
-                MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (string.IsNullOrEmpty(customer.Email))
-            {
-                MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            if (string.IsNullOrEmpty(customer.FirstName)) { MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (string.IsNullOrEmpty(customer.LastName)) { MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (string.IsNullOrEmpty(customer.Email)) { MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
             try
             {
                 this._dbManager.InsertCustomer(customer);
@@ -276,16 +206,8 @@ namespace FT_Inventory.MVVM.ViewModel
                 this.GoBack();
 
             }
-            catch (SqlException exception)
-            {
-                if (exception.Number == 2627)
-                    MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
+            catch (SqlException exception) { if (exception.Number == 2627) MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
         public void SaveNewOrder(Order order)
         {
@@ -295,47 +217,23 @@ namespace FT_Inventory.MVVM.ViewModel
                 odvm.LoadCustomer();
                 odvm.CurrentOrder.CalculateTotalPrice();
                 if (this._dbManager.InsertOrder(order))
-                {
-                    foreach (OrderItem orderItem in order.OrderItems)
-                        this._dbManager.InsertOrderItem(orderItem);
-                }
-                else
-                { 
-                    MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                    foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem);
+                else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
                 MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
             }
-            catch (SqlException exception)
-            {
-                if (exception.Number == 547)
-                    MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            catch (SqlException exception) { if (exception.Number == 547) MessageBox.Show("Error: Customer does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveExistingOrder(Order order)
         {
             try
             {
-                if (this._dbManager.UpdateOrder(order))
-                    MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                else
-                    MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (this._dbManager.UpdateOrder(order)) MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-            }
+            catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveNewOrderItem(OrderItem orderItem)
@@ -350,18 +248,15 @@ namespace FT_Inventory.MVVM.ViewModel
                 MessageBox.Show("Order Item saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.GoBack();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
+            catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         public void SaveExistingOrderItem(OrderItem orderItem)
         {
-            try
+            if (_dbManager.UpdateOrderItem(orderItem))
             {
-                if (_dbManager.UpdateOrderItem(orderItem))
+                try
                 {
                     OrderDetailsViewModel odvm = this._viewHistory.Peek() as OrderDetailsViewModel;
                     odvm.CurrentOrder.UpdateOrderItem(orderItem);
@@ -372,53 +267,24 @@ namespace FT_Inventory.MVVM.ViewModel
                     OrdersViewModel ovm = this._viewHistory.Peek() as OrdersViewModel;
                     ovm.SelectedOrder = odvm.CurrentOrder;
                 }
-                else
-                    MessageBox.Show("Error saving the order item. Please save the Order if you created a new OrderItem", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                catch (SqlException ex) { MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show($"Unhandled SQL Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            else MessageBox.Show("Error saving the order item. Please save the Order if you created a new OrderItem", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void SwitchSelected()
         {
-            if (CurrentView is ProductsViewModel)
-            {
-                HomeViewSelected = false;
-                ProductsViewSelected = true;
-                CustomersViewSelected = false;
-                OrdersViewSelected = false;
-            }
-            else if (CurrentView is CustomersViewModel)
-            {
-                HomeViewSelected = false;
-                ProductsViewSelected = false;
-                CustomersViewSelected = true;
-                OrdersViewSelected = false;
-            }
-            else if (CurrentView is OrdersViewModel)
-            {
-                HomeViewSelected = false;
-                ProductsViewSelected = false;
-                CustomersViewSelected = false;
-                OrdersViewSelected = true;
-            }
-            else
-            {
-                HomeViewSelected = true;
-                ProductsViewSelected = false;
-                CustomersViewSelected = false;
-                OrdersViewSelected = false;
-            }
+            HomeViewSelected = CurrentView is HomeViewModel;
+            ProductsViewSelected = CurrentView is ProductsViewModel;
+            CustomersViewSelected = CurrentView is CustomersViewModel;
+            OrdersViewSelected = CurrentView is OrdersViewModel;
+
             OnPropertyChanged(nameof(HomeViewSelected));
             OnPropertyChanged(nameof(ProductsViewSelected));
             OnPropertyChanged(nameof(CustomersViewSelected));
             OnPropertyChanged(nameof(OrdersViewSelected));
         }
+
     }
 }
