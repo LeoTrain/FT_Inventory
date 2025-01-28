@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:FT_Inventory.MVVM.View"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid >
+        <!-- Background dark for better contrast -->
         <!-- Header with title -->
         <StackPanel Margin="20">
             <TextBlock Text="Welcome to FT Inventory"
@@ -34,7 +35,18 @@
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
-                    Command="{Binding DataContext.SwitchToProductsView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                    Command="{Binding DataContext.SwitchToProductsView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF8C00"/>
+                                <Setter Property="BorderBrush" Value="#FF8C00"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Content="Customers"
                     Width="120"
                     Height="40"
@@ -45,7 +57,18 @@
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
-                    Command="{Binding DataContext.SwitchToCustomerView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                    Command="{Binding DataContext.SwitchToCustomerView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF8C00"/>
+                                <Setter Property="BorderBrush" Value="#FF8C00"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Content="Orders"
                     Width="120"
                     Height="40"
@@ -56,60 +79,67 @@
                     Margin="10"
                     FontSize="14"
                     FontWeight="SemiBold"
-                    Command="{Binding DataContext.SwitchToOrderView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-            <Button Content="Statistics"
-                    Width="120"
-                    Height="40"
-                    Background="Orange"
-                    Foreground="White"
-                    BorderBrush="Orange"
-                    BorderThickness="1"
-                    Margin="10"
-                    FontSize="14"
-                    FontWeight="SemiBold"/>
+                    Command="{Binding DataContext.SwitchToOrderView, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF8C00"/>
+                                <Setter Property="BorderBrush" Value="#FF8C00"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </StackPanel>
 
         <!-- Main Content Area with visual cards -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 140, 0, 0">
-            <!-- Hot Products Card -->
-            <Border Width="200"
-                    Height="200"
+            <!-- Card for insights text -->
+            <Border Width="300"
+                    Height="150"
+                    Background="#444444"
                     CornerRadius="10"
-                    Margin="20">
-                <StackPanel>
-                    <TextBlock Text="Hot Products"
+                    Margin="10"
+                    Padding="10"
+                    BorderBrush="Orange"
+                    BorderThickness="2">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Gain insights into your business's performance and growth."
                                Foreground="White"
-                               FontSize="18"
-                               Margin="20, 10, 10, 0"
+                               FontSize="14"
                                HorizontalAlignment="Center"
-                               FontFamily="/Fonts/Poppins/#Poppins"/>
-                    <Image Width="150"
-                           Height="150"
-                           Source="/Images/beer.png"
-                           HorizontalAlignment="Center"/>
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="Track sales trends, customer engagement, and overall efficiency."
+                               Foreground="White"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
 
-            <!-- Statistics Card -->
-            <Border Width="200"
-                    Height="200"
+            <Border Width="300"
+                    Height="150"
+                    Background="#444444"
                     CornerRadius="10"
-                    Margin="20">
-                <StackPanel>
-                    <TextBlock Text="Statistics"
+                    Margin="10"
+                    Padding="10"
+                    BorderBrush="Orange"
+                    BorderThickness="2">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Make data-driven decisions and optimize your workflow."
                                Foreground="White"
-                               FontSize="18"
-                               Margin="20, 10, 10, 0"
+                               FontSize="14"
                                HorizontalAlignment="Center"
-                               FontFamily="/Fonts/Poppins/#Poppins"/>
-                    <Image Width="150"
-                           Height="150"
-                           Source="/Images/statistics.png"
-                           HorizontalAlignment="Center"/>
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="Visualize your business' key metrics and adapt accordingly."
+                               Foreground="White"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
         </StackPanel>
 
     </Grid>
 </UserControl>
-
