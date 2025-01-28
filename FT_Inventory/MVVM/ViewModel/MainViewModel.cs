@@ -31,6 +31,7 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
 
+        public RelayCommand ExitButtonCommand { get; }
         public RelayCommand SwitchToHomeView { get; }
         public RelayCommand SwitchToProductsView { get; }
         public RelayCommand SwitchToCustomerView { get; }
@@ -58,6 +59,7 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             _dbManager = dbManager;
             CurrentView = new HomeViewModel();
+            ExitButtonCommand = new RelayCommand(o => { MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the Application?", "Confirmation", MessageBoxButton.YesNo); if (result == MessageBoxResult.Yes) System.Windows.Application.Current.Shutdown(); });
             SwitchToProductDetailsView = new RelayCommand(o => this.NavigateTo(new ProductDetailsViewModel(this._dbManager, o as Product, false)));
             SwitchToCustomerDetailsView = new RelayCommand(o => this.NavigateTo(new CustomerDetailsViewModel(this._dbManager, o as Customer, false)));
             SwitchToOrderDetailsView = new RelayCommand(o => this.NavigateTo(new OrderDetailsViewModel(this._dbManager, o as Order, false)));

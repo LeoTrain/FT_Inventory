@@ -76,7 +76,7 @@
                             Foreground="{StaticResource WhiteBrush}"
                             FontSize="24"
                             Style="{StaticResource DeleteButtonTheme}"
-                            x:Name="ExitButton" Click="ExitButton_Click"/>
+                            x:Name="ExitButton" Command="{Binding ExitButtonCommand}"/>
                 </StackPanel>
             </Grid>
 

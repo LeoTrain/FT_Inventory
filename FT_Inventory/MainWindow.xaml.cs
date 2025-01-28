@@ -20,21 +20,9 @@ namespace FT_Inventory
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DatabaseManager dbManager;
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to proceed?",
-                          "Confirmation",
-                          MessageBoxButton.YesNo);
-
-            if (result == MessageBoxResult.Yes)
-                System.Windows.Application.Current.Shutdown();
-        }
-
     }
 }
