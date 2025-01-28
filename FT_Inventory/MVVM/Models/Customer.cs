@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,178 +9,65 @@ namespace FT_Inventory.MVVM.Models
 {
     public class Customer
     {
-        private int _id { get; set; }
-        private string _firstName { get; set; }
-        private string _lastName { get; set; }
-        private string _email { get; set; }
-        private string _phone { get; set; }
-        private string _address { get; set; }
-        private string _city { get; set; }
-        private string _state { get; set; }
-        private string _postalCode { get; set; }
-        private string _country { get; set; }
-        private DateTime _createdAt { get; set; }
-        private DateTime _updatedAt { get; set; }
-        private string _imageUrl { get; set; }
-
-        public int Id
-        {
-            get => _id;
-            set => _id = value;
-        }
-        public string FirstName
-        {
-            get => _firstName;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("First name cannot be empty");
-                };
-                _firstName = value;
-            }
-        }
-        public string LastName
-        {
-            get => _lastName;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Last name cannot be empty");
-                };
-                _lastName = value;
-            }
-        }
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Email cannot be empty");
-                };
-                _email = value;
-            }
-        }
-        public string Phone
-        {
-            get => _phone;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Phone cannot be empty");
-                };
-                _phone = value;
-            }
-        }
-        public string Address
-        {
-            get => _address;
-            set => _address = value;
-        }
-        public string City
-        {
-            get => _city;
-            set => _city = value;
-        }
-        public string State
-        {
-            get => _state;
-            set => _state = value;
-        }
-        public string PostalCode
-        {
-            get => _postalCode;
-            set => _postalCode = value;
-        }
-        public string Country
-        {
-            get => _country;
-            set => _country = value;
-        }
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("Created at cannot be empty");
-                };
-                if (value > DateTime.Now)
-                {
-                    throw new ArgumentException("Created at cannot be in the future");
-                };
-                _createdAt = value;
-            }
-        }
-        public DateTime UpdatedAt
-        {
-            get => _updatedAt;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("Updated at cannot be empty");
-                };
-                if (value > DateTime.Now)
-                {
-                    throw new ArgumentException("Updated at cannot be in the future");
-                };
-                _updatedAt = value;
-            }
-        }
+        private string _firstName;
+        private string _lastName;
+        private string _email;
+        public int Id { get; set; }
+        /// <summary>
+        /// The first name of the customer cannot be null or empty.
+        /// </summary>
+        public string FirstName { get => _firstName; set { if (!string.IsNullOrEmpty(value)) _firstName = value; }}
+        /// <summary>
+        /// The last name of the customer cannot be null or empty.
+        /// </summary>
+        public string LastName { get => _lastName; set { if (!string.IsNullOrEmpty(value)) _lastName = value; }}
         public string FullName { get; set; }
-        public string ImageUrl
-        {
-            get => _imageUrl;
-            set
-            {
-                if (value.Length > 255)
-                    throw new ArgumentException("Image URL cannot be longer than 255 characters");
-                if (string.IsNullOrEmpty(value))
-                    _imageUrl = "";
-                else
-                    _imageUrl = value;
-            }
-        }
-
+        /// <summary>
+        /// The email of the customer cannot be null or empty.
+        /// </summary>
+        public string Email { get => _email; set { if (!string.IsNullOrEmpty(value)) _email = value; }}
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
+        public string Country { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public string ImageUrl { get; set; }
         public Customer()
         {
-            _id = 0;
+            Id = 0;
             _firstName = string.Empty;
             _lastName = string.Empty;
             _email = string.Empty;
-            _phone = string.Empty;
-            _address = string.Empty;
-            _city = string.Empty;
-            _state = string.Empty;
-            _postalCode = string.Empty;
-            _country = string.Empty;
-            _createdAt = DateTime.Now;
-            _updatedAt = DateTime.Now;
-            _imageUrl = string.Empty;
+            Phone = string.Empty;
+            Address = string.Empty;
+            City = string.Empty;
+            State = string.Empty;
+            PostalCode = string.Empty;
+            Country = string.Empty;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
+            ImageUrl = string.Empty;
             FullName = string.Empty;
         }
         public Customer(int customerId, string first_name, string last_name, string email, string phone, DateTime createdAt, DateTime updatedAt, string address = "", string city = "", string state = "", string postal_code = "", string country = "", string image_url = "")
         {
-            _id = customerId;
+            Id = customerId;
             _firstName = first_name;
             _lastName = last_name;
             _email = email;
-            _phone = phone;
-            _address = address;
-            _city = city;
-            _state = state;
-            _postalCode = postal_code;
-            _country = country;
-            _createdAt = createdAt;
-            _updatedAt = updatedAt;
-            _imageUrl = image_url;
-            FullName = _firstName + " " + _lastName;
+            Phone = phone;
+            Address = address;
+            City = city;
+            State = state;
+            PostalCode = postal_code;
+            Country = country;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
+            ImageUrl = image_url;
+            FullName = $"{FirstName} {LastName}";
         }
     }
 }
