@@ -13,24 +13,14 @@ namespace FT_Inventory.MVVM.ViewModel
     public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Notify the UI that a property has changed.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            Debug.WriteLine($"Property changed: {propertyName}");
+            //Debug.WriteLine($"Property changed: {propertyName}");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value))
-                return false;
-
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        public void ClearTextBox(TextBox textBox)
-        {
-            textBox.Text= textBox.Text.Replace("\r\n", "");
         }
     }
 }
