@@ -50,3 +50,20 @@ CREATE TABLE [inventoryDb].[dbo].[order_items] (
     FOREIGN KEY ([order_id]) REFERENCES [inventoryDb].[dbo].[orders]([order_id]),  -- Clé étrangère vers `orders`
     FOREIGN KEY ([product_id]) REFERENCES [inventoryDb].[dbo].[Products]([product_id]) -- Clé étrangère vers `Products`
 );
+
+
+INSERT INTO Products (stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at)
+VALUES
+('SKU001', 'Product 1', 'Description of Product 1', 19.99, 100, 'Category 1', NULL, 10.00, 1, GETDATE(), GETDATE()),
+('SKU002', 'Product 2', NULL, 15.49, 200, 'Category 2', 'http://example.com/image2.jpg', NULL, 1, GETDATE(), GETDATE()),
+('SKU003', 'Product 3', 'Description of Product 3', 25.00, 150, 'Category 1', NULL, 5.00, 1, GETDATE(), GETDATE()),
+('SKU004', 'Product 4', NULL, 30.00, 120, 'Category 3', 'http://example.com/image4.jpg', 20.00, 1, GETDATE(), GETDATE()),
+('SKU005', 'Product 5', 'Description of Product 5', 10.99, 250, 'Category 2', NULL, NULL, 1, GETDATE(), GETDATE()),
+('SKU006', 'Product 6', 'Description of Product 6', 50.00, 80, 'Category 3', 'http://example.com/image6.jpg', 15.00, 1, GETDATE(), GETDATE()),
+('SKU007', 'Product 7', 'Description of Product 7', 19.99, 100, 'Category 1', NULL, NULL, 1, GETDATE(), GETDATE()),
+('SKU008', 'Product 8', NULL, 20.00, 200, 'Category 2', 'http://example.com/image8.jpg', 5.00, 1, GETDATE(), GETDATE()),
+('SKU009', 'Product 9', 'Description of Product 9', 12.99, 500, 'Category 3', NULL, 10.00, 1, GETDATE(), GETDATE()),
+('SKU010', 'Product 10', NULL, 40.00, 150, 'Category 1', 'http://example.com/image10.jpg', 10.00, 1, GETDATE(), GETDATE()),
+('SKU011', 'Product 11', 'Description of Product 11', 15.99, 300, 'Category 2', NULL, NULL, 1, GETDATE(), GETDATE()),
+('SKU012', 'Product 12', 'Description of Product 12', 60.00, 100, 'Category 3', 'http://example', 20.00, 1, GETDATE(), GETDATE());
+
