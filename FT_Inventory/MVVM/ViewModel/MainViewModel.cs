@@ -216,7 +216,6 @@ namespace FT_Inventory.MVVM.ViewModel
                             oivm.LoadProduct();
                             if (oivm.CurrentOrderItem.OrderItemId == 0) this.SaveNewOrderItem(orderItem);
                             else this.SaveExistingOrderItem(oivm.CurrentOrderItem);
-                            //OnPropertyChanged(nameof(oivm.CurrentProduct));
                         }
                     }
                     catch (SqlException ex) { MessageBox.Show($"Error saving the order item: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
