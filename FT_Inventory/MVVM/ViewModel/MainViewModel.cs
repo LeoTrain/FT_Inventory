@@ -178,11 +178,12 @@ namespace FT_Inventory.MVVM.ViewModel
             });
             SaveCustomerCommand = new RelayCommand(o =>
             {
+                bool save_result = false;
                 if (o is Customer customer)
                 {
-                    if (customer.Id == 0) this.SaveNewCustomer(customer);
-                    else this.SaveExistingCustomer(customer);
-                    this.GoBack();
+                    if (customer.Id == 0) save_result = this.SaveNewCustomer(customer);
+                    else save_result = this.SaveExistingCustomer(customer);
+                    if (save_result) this.GoBack();
                 }
                 else MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             });
@@ -285,15 +286,29 @@ namespace FT_Inventory.MVVM.ViewModel
         /// <param name="customer"></param>
         /// <exception cref="SqlException">If an SQL error occurs</exception>
         /// <exception cref="Exception">If an error occurs</exception>
-        public void SaveExistingCustomer(Customer customer)
+        /// <returns>A <see cref="bool"/> that results if the customer has been saved.</returns>
+        public bool SaveExistingCustomer(Customer customer)
         {
+            if (string.IsNullOrEmpty(customer.FirstName)) { MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.FirstName.Count() > 50) { MessageBox.Show("Customers first name cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (string.IsNullOrEmpty(customer.LastName)) { MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.LastName.Count() > 50) { MessageBox.Show("Customers last name cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (string.IsNullOrEmpty(customer.Email)) { MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Email.Count() > 50) { MessageBox.Show("Customers email cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Phone.Count() > 25) { MessageBox.Show("Customers phone number cannot be longer than 25 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Address.Count() > 50) { MessageBox.Show("Customers address cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.City.Count() > 50) { MessageBox.Show("Customers city cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.State.Count() > 50) { MessageBox.Show("Customers state cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.PostalCode.Count() > 7) { MessageBox.Show("Customers postal code cannot be longer than 7 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Country.Count() > 50) { MessageBox.Show("Customers country cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
             try
             {
-                if (_dbManager.UpdateCustomer(customer)) MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                else MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (_dbManager.UpdateCustomer(customer)) { MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information); return true; }
+                else { MessageBox.Show("Error saving the customer", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
             }
             catch (SqlException exception) { if (exception.Number == 2627) MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
 
         /// <summary>
@@ -321,22 +336,31 @@ namespace FT_Inventory.MVVM.ViewModel
         /// </summary>
         /// <param name="customer"></param>
         /// <exception cref="SqlException">If an SQL error occurs</exception>
-        public void SaveNewCustomer(Customer customer)
+        public bool SaveNewCustomer(Customer customer)
         {
-            if (string.IsNullOrEmpty(customer.FirstName)) { MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-            if (string.IsNullOrEmpty(customer.LastName)) { MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
-            if (string.IsNullOrEmpty(customer.Email)) { MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+            if (string.IsNullOrEmpty(customer.FirstName)) { MessageBox.Show("Customers first name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.FirstName.Count() > 50) { MessageBox.Show("Customers first name cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (string.IsNullOrEmpty(customer.LastName)) { MessageBox.Show("Customers last name cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.LastName.Count() > 50) { MessageBox.Show("Customers last name cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (string.IsNullOrEmpty(customer.Email)) { MessageBox.Show("Customers email cannot be empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Email.Count() > 50) { MessageBox.Show("Customers email cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Phone.Count() > 25) { MessageBox.Show("Customers phone number cannot be longer than 25 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Address.Count() > 50) { MessageBox.Show("Customers address cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.City.Count() > 50) { MessageBox.Show("Customers city cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.State.Count() > 50) { MessageBox.Show("Customers state cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.PostalCode.Count() > 7) { MessageBox.Show("Customers postal code cannot be longer than 7 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
+            if (customer.Country.Count() > 50) { MessageBox.Show("Customers country cannot be longer than 50 characters", "Error", MessageBoxButton.OK, MessageBoxImage.Error); return false; }
             try
             {
                 this._dbManager.InsertCustomer(customer);
                 MessageBox.Show("Customer saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 CustomersViewModel? cvm = this._viewHistory.Peek() as CustomersViewModel;
-                cvm?.AddCustomer(customer);
-                this.GoBack();
-
+                cvm?.ReloadCustomers();
+                return true;
             }
             catch (SqlException exception) { if (exception.Number == 2627) MessageBox.Show("Error: Email Address is already used", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex) { MessageBox.Show($"Unhandled Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            return false;
         }
         /// <summary>
         /// Method to save a new order into the database.
@@ -441,14 +465,14 @@ namespace FT_Inventory.MVVM.ViewModel
         }
 
         /// <summary>
-        /// Method to switch the selected view and call the OnPropertyChanged method for the properties.
+        /// Method to switch the selected view and call the OnPropertyChanged method for the properties. (Is for the Menu bar, so that it stays selected)
         /// </summary>
         private void SwitchSelected()
         {
             HomeViewSelected = CurrentView is HomeViewModel;
-            ProductsViewSelected = CurrentView is ProductsViewModel;
-            CustomersViewSelected = CurrentView is CustomersViewModel;
-            OrdersViewSelected = CurrentView is OrdersViewModel;
+            ProductsViewSelected = CurrentView is ProductsViewModel || CurrentView is ProductDetailsViewModel;
+            CustomersViewSelected = CurrentView is CustomersViewModel || CurrentView is CustomerDetailsViewModel;
+            OrdersViewSelected = CurrentView is OrdersViewModel || CurrentView is OrderDetailsViewModel || CurrentView is OrderItemViewModel;
 
             OnPropertyChanged(nameof(HomeViewSelected));
             OnPropertyChanged(nameof(ProductsViewSelected));

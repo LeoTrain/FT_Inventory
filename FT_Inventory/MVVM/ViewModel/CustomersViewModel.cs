@@ -49,14 +49,17 @@ namespace FT_Inventory.MVVM.ViewModel
         /// </summary>
         public string SearchText
         {
-            get { return _searchText; }
+            get => _searchText;
             set
             {
                 if (_searchText != value)
                 {
-                    _searchText = value;
-                    OnPropertyChanged(nameof(SearchText));
-                    this.UpdateCustomersBySearchText();
+                    if (value.Count() < 50)
+                    {
+                        _searchText = value;
+                        OnPropertyChanged(nameof(SearchText));
+                        this.UpdateCustomersBySearchText();
+                    }
                 }
             }
         }
@@ -81,9 +84,9 @@ namespace FT_Inventory.MVVM.ViewModel
         /// Add a customer to the list of customers. This method is used to add a new customer to the database.
         /// </summary>
         /// <param name="customer"></param>
-        public void AddCustomer(Customer customer)
+        public void ReloadCustomers()
         {
-            Customers.Add(customer);
+            Customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
         }
 
         /// <summary>
@@ -91,11 +94,11 @@ namespace FT_Inventory.MVVM.ViewModel
         /// </summary>
         private void UpdateCustomersBySearchText()
         {
-            if (string.IsNullOrWhiteSpace(SearchText)) Customers = new ObservableCollection<Customer>(_dbManager.GetAllCustomers());
+            if (string.IsNullOrWhiteSpace(SearchText)) { Customers = new ObservableCollection<Customer>(this._dbManager.GetAllCustomers()); OnPropertyChanged(nameof(Customers)); }
             else
             {
                 var customersFromDb = _dbManager.GetAllCustomers();
-                var filteredProducts = customersFromDb.Where(p => p.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+                var filteredProducts = customersFromDb.Where(c => c.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
                 Customers = new ObservableCollection<Customer>(filteredProducts);
                 OnPropertyChanged(nameof(Customers));
             }
