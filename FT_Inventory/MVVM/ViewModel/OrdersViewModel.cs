@@ -54,6 +54,9 @@ namespace FT_Inventory.MVVM.ViewModel
             DeleteOrderCommand = new RelayCommand(o => DeleteOrder());
         }
 
+        /// <summary>
+        /// Delete the selected order from the database and the list of orders.
+        /// </summary>
         public void DeleteOrder()
         {
             if (this.SelectedOrder != null)
@@ -70,6 +73,9 @@ namespace FT_Inventory.MVVM.ViewModel
             }
         }
 
+        /// <summary>
+        /// Update the list of orders based on the search text. If the search text is empty, show all orders.
+        /// </summary>
         private void UpdateOrdersBySearchText()
         {
             if (string.IsNullOrWhiteSpace(SearchText))
@@ -80,7 +86,6 @@ namespace FT_Inventory.MVVM.ViewModel
                 var filteredOrders = ordersFromDb
                     .Where(o => o.Customer.FullName.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-
                 Orders = new ObservableCollection<Order>(filteredOrders);
             }
             OnPropertyChanged(nameof(Orders));

@@ -196,9 +196,9 @@ namespace FT_Inventory.MVVM.ViewModel
                     else order_saved = this.SaveNewOrder(order);
                     try 
                     { 
+                        if (order_saved) this.GoBack();
                         var ordersViewModel = this.CurrentView as OrdersViewModel;
                         if (ordersViewModel != null) { ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders()); OnPropertyChanged(nameof(ordersViewModel.Orders)); }
-                        if (order_saved) this.GoBack();
                     } 
                     catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
