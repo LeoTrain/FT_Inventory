@@ -298,21 +298,23 @@ namespace FT_Inventory.MVVM.Models
         /// </summary>
         /// <param name="orderItem"></param>
         /// <returns>A <see cref="bool"/> that defines if the order item has been updated.</returns>
-        public bool UpdateOrderItem(OrderItem orderItem)
+        public bool UpdateOrderItem(OrderItem neworderItem)
         {
-            if (!this.OrderItemExists(orderItem)) return false;
-            if (orderItem.Product.StockQuantity < orderItem.Quantity) return false;
-            string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, stock_quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
+            if (!this.OrderItemExists(neworderItem)) return false;
+            OrderItem original = this.GetOrderItemsByOrderId(neworderItem.OrderId).FirstOrDefault(item => item.OrderItemId == neworderItem.OrderItemId);
+            if (original != null && original.Quantity == neworderItem.Quantity && original.Product.Id == neworderItem.Product.Id) return true;
+            if (neworderItem.Product.StockQuantity < neworderItem.Quantity) return false;
+            string query = "UPDATE Order_Items SET order_id = @OrderId, product_id = @ProductId, quantity = @Quantity, total_price = @TotalPrice WHERE order_item_id = @OrderItemId";
             List<SqlParameter> parameter = new List<SqlParameter>
             {
-                new SqlParameter("@OrderItemId", orderItem.OrderItemId),
-                new SqlParameter("@OrderId", orderItem.OrderId),
-                new SqlParameter("@ProductId", orderItem.ProductId),
-                new SqlParameter("@Quantity", orderItem.Quantity),
-                new SqlParameter("@TotalPrice", orderItem.TotalPrice)
+                new SqlParameter("@OrderItemId", neworderItem.OrderItemId),
+                new SqlParameter("@OrderId", neworderItem.OrderId),
+                new SqlParameter("@ProductId", neworderItem.ProductId),
+                new SqlParameter("@Quantity", neworderItem.Quantity),
+                new SqlParameter("@TotalPrice", neworderItem.TotalPrice)
             };
             bool result = ExecuteNonQuery(query, parameter);
-            if (result) this.RemoveQuantityFromProduct(orderItem.Product.Id, orderItem.Quantity);
+            if (result) this.RemoveQuantityFromProduct(neworderItem.Product.Id, neworderItem.Quantity);
             return result;
         }
 
@@ -465,7 +467,7 @@ namespace FT_Inventory.MVVM.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private Product GetProductById(int id)
+        public Product GetProductById(int id)
         {
             string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE product_id = @ProductId";
             List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@ProductId", id) };

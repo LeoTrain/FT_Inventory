@@ -193,13 +193,12 @@ namespace FT_Inventory.MVVM.ViewModel
                 {
                     bool order_saved = false;
                     if (this._dbManager.OrderExists(order.OrderId)) order_saved = this.SaveExistingOrder(order);
-                    else this.SaveNewOrder(order);
-                    this.GoBack();
+                    else order_saved = this.SaveNewOrder(order);
                     try 
                     { 
                         var ordersViewModel = this.CurrentView as OrdersViewModel;
                         if (ordersViewModel != null) { ordersViewModel.Orders = new ObservableCollection<Order>(this._dbManager.GetAllOrders()); OnPropertyChanged(nameof(ordersViewModel.Orders)); }
-                        MessageBox.Show("Order saved successfully !", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        if (order_saved) this.GoBack();
                     } 
                     catch (Exception ex) { MessageBox.Show($"Error changing the view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
@@ -372,16 +371,15 @@ namespace FT_Inventory.MVVM.ViewModel
         {
             try
             {
-                OrderDetailsViewModel? odvm = CurrentView as OrderDetailsViewModel;
-                //odvm?.LoadCustomer();
-                //odvm?.CurrentOrder.CalculateTotalPrice();
-                if (odvm != null)
-                {
-                    bool result = this._dbManager.InsertOrder(order);
-                    if (result) { foreach (OrderItem orderItem in order.OrderItems) this._dbManager.InsertOrderItem(orderItem); MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information); }
-                    else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
-                    return result;
+                if (this._dbManager.InsertOrder(order)) 
+                { 
+                    bool orderItemsSaved = true;
+                    foreach (OrderItem orderItem in order.OrderItems) orderItemsSaved = orderItemsSaved == true ? this._dbManager.InsertOrderItem(orderItem) : false;
+                    if (orderItemsSaved) { MessageBox.Show("Order saved successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Information); return true; }
+                    else { MessageBox.Show("Error saving the order items", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
+                else { MessageBox.Show("Error saving the order", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                return false;
             }
             catch (SqlException exception) 
             { 
@@ -478,6 +476,7 @@ namespace FT_Inventory.MVVM.ViewModel
             OnPropertyChanged(nameof(ProductsViewSelected));
             OnPropertyChanged(nameof(CustomersViewSelected));
             OnPropertyChanged(nameof(OrdersViewSelected));
+            OnPropertyChanged(nameof(CurrentView));
         }
 
     }

@@ -56,10 +56,8 @@ namespace FT_Inventory.MVVM.ViewModel
                     {
                         _selectedProduct = product;
                         CurrentProduct = product;
-                        CurrentOrderItem.Quantity = 0;
                         OnPropertyChanged(nameof(SelectedProduct));
-                        OnPropertyChanged(nameof(CurrentProduct));
-                        OnPropertyChanged(nameof(CurrentOrderItem));
+                        if (IsNewOrderItem) { CurrentOrderItem.Quantity = 0; OnPropertyChanged(nameof(CurrentOrderItem)); }
                         this.LoadProduct();
                     }
             }
@@ -111,7 +109,7 @@ namespace FT_Inventory.MVVM.ViewModel
         public void LoadProduct()
         {
             CurrentOrderItem.Product = _selectedProduct;
-            CurrentProduct = _selectedProduct;
+            CurrentProduct = this.dbManager.GetProductById(_selectedProduct.Id);
             OnPropertyChanged(nameof(CurrentOrderItem));
             OnPropertyChanged(nameof(CurrentProduct));
         }

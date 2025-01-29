@@ -73,11 +73,11 @@
                                     <TextBlock Text="{Binding Quantity}" Grid.Column="2" VerticalAlignment="Center" Padding="5"/>
                                     <TextBlock Text="{Binding TotalPrice, StringFormat=\{0:C\}}" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="5"/>
                                     <Button Content="Edit" 
-                                    Command="{Binding DataContext.SwitchToOrderItemView, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
-                                    CommandParameter="{Binding}" 
-                                    Grid.Column="4" 
-                                    Width="50" 
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            Command="{Binding DataContext.SwitchToOrderItemView, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" 
+                                            CommandParameter="{Binding}" 
+                                            Grid.Column="4" 
+                                            Width="50" 
+                                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     <Button Content="Delete"
                                             Command="{Binding DataContext.DeleteOrderItemCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
