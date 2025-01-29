@@ -541,6 +541,33 @@ namespace FT_Inventory.MVVM.Models
             return categories.ToArray();
         }
 
+        public List<Product> GetAllProductsWithoutOrderId(int orderId)
+        {
+            string query = "SELECT product_id, stock_keeping_unit, name, description, price, stock_quantity, category, image_url, discount, is_active, created_at, updated_at FROM Products WHERE product_id NOT IN (SELECT product_id FROM order_items WHERE order_id = @OrderId)";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@OrderId", orderId) };
+            DataTable dataTable = ExecuteQuery(query, parameters);
+            List<Product> products = new List<Product>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                products.Add(new Product
+                (
+                    (int)row["product_id"],
+                    (string)row["stock_keeping_unit"],
+                    (string)row["name"],
+                    (string)row["description"],
+                    (decimal)row["price"],
+                    (int)row["stock_quantity"],
+                    (string)row["category"],
+                    (string)row["image_url"],
+                    (decimal)row["discount"],
+                    (bool)row["is_active"],
+                    (DateTime)row["created_at"],
+                    (DateTime)row["updated_at"]
+                ));
+            }
+            return products;
+        }
+
         /// <summary>
         /// This method retrieves all <see cref="Order"/>'s by their <see cref="Order.Customer"/>.
         /// </summary>
@@ -568,6 +595,23 @@ namespace FT_Inventory.MVVM.Models
                 }
             }
             return orderItems;
+        }
+
+        public Order GetOrderByOrderId(int orderId)
+        {
+            List<Product> products = this.GetAllProducts();
+            List<Customer> customers = this.GetAllCustomers();
+            string query = "SELECT order_id, customer_id, created_at FROM orders WHERE order_id = @OrderId";
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("@OrderId", orderId) };
+            DataTable dataTable = ExecuteQuery(query, parameters);
+            Order order = new Order(orderId);
+            foreach (DataRow row in dataTable.Rows)
+            {
+                List<OrderItem> orderItems = this.GetOrderItemsByOrderId((int)row["order_id"]);
+                var customer = customers.FirstOrDefault(customer => customer.Id == (int)row["customer_id"]);
+                if (customer != null) order = new Order((int)row["order_id"], customer, (DateTime)row["created_at"], orderItems);
+            }
+            return order;
         }
 
         /// <summary>

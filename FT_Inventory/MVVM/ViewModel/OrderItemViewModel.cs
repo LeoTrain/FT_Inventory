@@ -72,7 +72,7 @@ namespace FT_Inventory.MVVM.ViewModel
             CurrentOrderItem = currentOrderItem;
             CurrentOrderItem.ProductId = currentOrderItem.Product.Id;
             IsNewOrderItem = isNewOrderItem;
-            AllProducts = this.dbManager.GetAllProducts();
+            AllProducts = this.dbManager.GetAllProductsWithoutOrderId(CurrentOrderItem.OrderId);
             AllProductsName = AllProducts.Select(p => p.Name).ToList();
             SelectedProduct = currentOrderItem.Product.Name;
             if (IsNewOrderItem)

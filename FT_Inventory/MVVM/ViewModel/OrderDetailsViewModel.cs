@@ -86,18 +86,9 @@ namespace FT_Inventory.MVVM.ViewModel
             var dialogresult = MessageBox.Show("Are you sure you want to delete this item?", "Delete Order Item", MessageBoxButton.YesNo);
             if (dialogresult == MessageBoxResult.No) return;
             OrderItem item = orderItem as OrderItem;
-            CurrentOrder.RemoveOrderItem(item);
-            CurrentOrder.CalculateTotalPrice();
             this._dbManager.DeleteOrderItem(item);
+            CurrentOrder = this._dbManager.GetOrderByOrderId(CurrentOrder.OrderId);
             OnPropertyChanged(nameof(CurrentOrder));
         }
-
-        /// <summary>
-        /// Add an order item to the order. The order item is added to the <see cref="CurrentOrder"/> and the database. The total price of the order is recalculated. The <see cref="CurrentOrder"/> is updated.
-        /// </summary>
-        //public void LoadCustomer()
-        //{
-        //    CurrentOrder.Customer = _selectedCustomer;
-        //}
     }
 }
